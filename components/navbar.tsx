@@ -2,26 +2,43 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const navLinks = [
+const lifestyleLinks = [
   { label: "Accueil", href: "/" },
+  { label: "Nos divisions", href: "/#divisions" },
   { label: "À propos", href: "/a-propos" },
-  { label: "Services", href: "/services" },
-  { label: "Galerie", href: "/galerie" },
-  { label: "Réservation", href: "/reservation" },
   { label: "Contact", href: "/contact" },
+];
+
+const hairLinks = [
+  { label: "Accueil", href: "/hair" },
+  { label: "Services", href: "/hair/services" },
+  { label: "Galerie", href: "/hair/galerie" },
+  { label: "Réservation", href: "/hair/reservation" },
+  { label: "Contact", href: "/hair/contact" },
 ];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isHairSection = pathname.startsWith("/hair");
+  const navLinks = isHairSection ? hairLinks : lifestyleLinks;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-brand-black/80 backdrop-blur-md border-b border-brand-ivory/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="font-heading text-brand-ivory text-2xl">
-          DKY <span className="text-brand-champagne">Hair</span>
+        <Link
+          href={isHairSection ? "/hair" : "/"}
+          className="font-heading text-brand-ivory text-2xl"
+        >
+          DKY{" "}
+          <span className="text-brand-champagne">
+            {isHairSection ? "Hair" : "Lifestyle"}
+          </span>
         </Link>
 
         {/* Menu desktop */}
@@ -35,9 +52,11 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-6">
-            Réserver
-          </Button>
+          {isHairSection && (
+            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-6">
+              Réserver
+            </Button>
+          )}
         </div>
 
         {/* Bouton menu mobile */}
@@ -63,9 +82,11 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
-          <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full w-full">
-            Réserver
-          </Button>
+          {isHairSection && (
+            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full w-full">
+              Réserver
+            </Button>
+          )}
         </div>
       )}
     </nav>
