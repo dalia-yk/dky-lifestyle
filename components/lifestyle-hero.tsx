@@ -33,12 +33,9 @@ export function LifestyleHero() {
               Discover our divisions
             </Button>
           </Link>
-          <Link href="/hair">
-            <Button
-              variant="outline"
-              className="border-brand-ivory/40 text-brand-ivory hover:bg-brand-ivory/10 rounded-full px-8 py-6 text-base"
-            >
-              Visit DKY Hair
+          <Link href="/a-propos">
+            <Button variant="outline" className="border-brand-ivory/40 text-brand-black hover:bg-brand-ivory/10 rounded-full px-8 py-6 text-base">
+              À propos
             </Button>
           </Link>
         </div>

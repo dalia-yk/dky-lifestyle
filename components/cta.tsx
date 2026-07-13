@@ -20,10 +20,10 @@ export function Cta() {
         <p className="font-sans text-brand-ivory/70 text-base md:text-lg mb-10">
           Découvre nos divisions et réserve ton moment Crafted by Purpose.
         </p>
-        <Link href="/hair">
-          <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-10 py-6 text-base">
-            Réserver maintenant
-          </Button>
+        <Link href="#divisions">
+            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-10 py-6 text-base">
+               Découvrir nos divisions
+            </Button>
         </Link>
       </motion.div>
     </section>

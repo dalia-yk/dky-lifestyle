@@ -6,7 +6,7 @@ const galleryItems = [
   { label: "Knotless Braids", tone: "from-brand-mocha to-brand-black" },
   { label: "Boho Braids", tone: "from-brand-champagne/40 to-brand-black" },
   { label: "Soft Locs", tone: "from-brand-black to-brand-mocha" },
-  { label: "Événements DKY", tone: "from-brand-mocha to-brand-champagne/30" },
+  { label: "Moment DKY Hair", tone: "from-brand-mocha to-brand-champagne/30" },
   { label: "Créations DKY Pastry", tone: "from-brand-black to-brand-champagne/20" },
   { label: "Moments DKY", tone: "from-brand-champagne/30 to-brand-mocha" },
 ];
