@@ -3,34 +3,34 @@ import { ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/page-header";
-import { services } from "@/data/service";
+import { serviceCategories } from "@/data/service-categories";
 
-export default function ServicesListPage() {
+export default function ServicesOverviewPage() {
   return (
     <main>
       <Navbar />
       <PageHeader
         eyebrow="DKY Hair"
         title="Nos services"
-        description="Découvre chaque coiffure signature, pensée avec précision et savoir-faire."
+        description="Coiffures, soins et expériences signature, pensés avec précision et savoir-faire."
       />
 
       <section className="bg-brand-black py-20 px-6">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
+        <div className="max-w-5xl mx-auto flex flex-wrap justify-center gap-6">
+          {serviceCategories.map((category) => (
             <Link
-              key={service.slug}
-              href={`/hair/services/${service.slug}`}
-              className={`group relative rounded-2xl overflow-hidden bg-gradient-to-br ${service.tone} border border-brand-champagne/20 hover:border-brand-champagne/50 transition-all p-6 h-64 flex flex-col justify-end`}
+              key={category.slug}
+              href={category.href}
+              className={`group relative w-full sm:w-80 rounded-2xl overflow-hidden bg-gradient-to-br ${category.tone} border border-brand-champagne/20 hover:border-brand-champagne/50 transition-all p-8 h-56 flex flex-col justify-end`}
             >
               <h3 className="font-heading text-brand-ivory text-2xl mb-2">
-                {service.name}
+                {category.title}
               </h3>
-              <p className="font-sans text-brand-champagne text-sm mb-3">
-                À partir de {service.priceFrom}$
+              <p className="font-sans text-brand-ivory/60 text-sm mb-3">
+                {category.tagline}
               </p>
-              <span className="inline-flex items-center gap-2 font-sans text-brand-ivory/70 text-sm group-hover:gap-3 transition-all">
-                Voir les détails
+              <span className="inline-flex items-center gap-2 font-sans text-brand-champagne text-sm group-hover:gap-3 transition-all">
+                Découvrir
                 <ArrowRight size={14} />
               </span>
             </Link>

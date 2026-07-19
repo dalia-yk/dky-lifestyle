@@ -8,9 +8,12 @@ export interface Service {
   withExtensions: boolean;
   addons: string[];
   tone: string;
+  collection: "braids" | "twist" | "locs";
+  availableFor: ("femmes" | "hommes" | "enfants")[];
 }
 
 export const services: Service[] = [
+  // --- BRAIDS COLLECTION ---
   {
     slug: "knotless-braids",
     name: "Knotless Braids",
@@ -22,6 +25,8 @@ export const services: Service[] = [
     withExtensions: true,
     addons: ["Lavage", "Traitement", "Démêlage"],
     tone: "from-brand-mocha to-brand-black",
+    collection: "braids",
+    availableFor: ["femmes", "enfants"],
   },
   {
     slug: "boho-braids",
@@ -34,6 +39,8 @@ export const services: Service[] = [
     withExtensions: true,
     addons: ["Lavage", "Traitement", "Dépose"],
     tone: "from-brand-champagne/40 to-brand-black",
+    collection: "braids",
+    availableFor: ["femmes"],
   },
   {
     slug: "fulani-braids",
@@ -46,6 +53,8 @@ export const services: Service[] = [
     withExtensions: true,
     addons: ["Lavage", "Traitement"],
     tone: "from-brand-black to-brand-mocha",
+    collection: "braids",
+    availableFor: ["femmes", "enfants"],
   },
   {
     slug: "cornrows",
@@ -58,7 +67,25 @@ export const services: Service[] = [
     withExtensions: false,
     addons: ["Lavage", "Démêlage"],
     tone: "from-brand-mocha to-brand-champagne/30",
+    collection: "braids",
+    availableFor: ["femmes", "hommes", "enfants"],
   },
+  {
+    slug: "stitch-braids",
+    name: "Stitch Braids",
+    tagline: "Des lignes nettes et précises, façon couture",
+    description:
+      "Des cornrows réalisées avec une technique de piqué très serrée qui crée des lignes fines et nettes, semblables à des points de couture — un rendu graphique et soigné.",
+    duration: "2 à 4 heures",
+    priceFrom: 110,
+    withExtensions: false,
+    addons: ["Lavage", "Démêlage"],
+    tone: "from-brand-champagne/30 to-brand-mocha",
+    collection: "braids",
+    availableFor: ["femmes", "enfants"],
+  },
+
+  // --- TWIST COLLECTION ---
   {
     slug: "spring-twist",
     name: "Spring Twist",
@@ -70,6 +97,8 @@ export const services: Service[] = [
     withExtensions: true,
     addons: ["Lavage", "Traitement", "Dépose"],
     tone: "from-brand-champagne/30 to-brand-black",
+    collection: "twist",
+    availableFor: ["femmes"],
   },
   {
     slug: "passion-twist",
@@ -82,7 +111,53 @@ export const services: Service[] = [
     withExtensions: true,
     addons: ["Lavage", "Traitement"],
     tone: "from-brand-black to-brand-champagne/20",
+    collection: "twist",
+    availableFor: ["femmes"],
   },
+  {
+    slug: "havana-twist",
+    name: "Havana Twist",
+    tagline: "Un twist épais et texturé, au style affirmé",
+    description:
+      "Réalisé avec des mèches épaisses à texture afro, ce twist offre un volume généreux et une allure audacieuse, parfaite pour un style qui ne passe pas inaperçu.",
+    duration: "5 à 7 heures",
+    priceFrom: 180,
+    withExtensions: true,
+    addons: ["Lavage", "Traitement", "Dépose"],
+    tone: "from-brand-mocha to-brand-black",
+    collection: "twist",
+    availableFor: ["femmes"],
+  },
+  {
+    slug: "senegalese-twist",
+    name: "Senegalese Twist",
+    tagline: "Des torsades fines et lisses, élégance intemporelle",
+    description:
+      "Un twist fin et soyeux réalisé avec des mèches lisses, pour un rendu raffiné et uniforme, apprécié pour sa polyvalence et son allure soignée.",
+    duration: "5 à 7 heures",
+    priceFrom: 175,
+    withExtensions: true,
+    addons: ["Lavage", "Traitement"],
+    tone: "from-brand-champagne/40 to-brand-mocha",
+    collection: "twist",
+    availableFor: ["femmes"],
+  },
+  {
+    slug: "barrel-twist",
+    name: "Barrel Twist",
+    tagline: "Un twist court et structuré, pensé pour les hommes",
+    description:
+      "Un style de twist compact et bien défini, adapté aux cheveux courts à mi-longs, offrant une allure soignée et facile à entretenir.",
+    duration: "1 à 3 heures",
+    priceFrom: 65,
+    withExtensions: false,
+    addons: ["Lavage"],
+    tone: "from-brand-black to-brand-mocha",
+    collection: "twist",
+    availableFor: ["hommes"],
+  },
+
+  // --- LOCS COLLECTION ---
   {
     slug: "soft-locs",
     name: "Soft Locs",
@@ -94,29 +169,35 @@ export const services: Service[] = [
     withExtensions: true,
     addons: ["Lavage", "Traitement", "Dépose"],
     tone: "from-brand-mocha to-brand-black",
+    collection: "locs",
+    availableFor: ["femmes"],
   },
   {
-    slug: "men-braids",
-    name: "Men Braids",
-    tagline: "Des tresses sur mesure, adaptées aux styles masculins",
+    slug: "butterfly-locs",
+    name: "Butterfly Locs",
+    tagline: "Des locs vaporeuses à l'effet déstructuré",
     description:
-      "Des designs de tresses pensés spécifiquement pour les coupes et textures masculines, du cornrow simple aux motifs plus élaborés.",
-    duration: "1 à 3 heures",
-    priceFrom: 60,
-    withExtensions: false,
-    addons: ["Lavage"],
-    tone: "from-brand-black to-brand-mocha",
+      "Une variante des soft locs légèrement défaite pour un effet plus vaporeux et bohème, très prisée pour son rendu naturel et texturé.",
+    duration: "6 à 8 heures",
+    priceFrom: 210,
+    withExtensions: true,
+    addons: ["Lavage", "Traitement", "Dépose"],
+    tone: "from-brand-champagne/30 to-brand-black",
+    collection: "locs",
+    availableFor: ["femmes"],
   },
   {
-    slug: "kids-braids",
-    name: "Kids Braids",
-    tagline: "Des styles doux et adaptés aux enfants",
+    slug: "faux-locs",
+    name: "Faux Locs",
+    tagline: "Des locs classiques, nettes et bien définies",
     description:
-      "Des coiffures protectrices réalisées avec douceur et patience, adaptées aux cheveux et au cuir chevelu sensible des enfants.",
-    duration: "2 à 4 heures",
-    priceFrom: 70,
-    withExtensions: false,
-    addons: ["Lavage", "Démêlage"],
-    tone: "from-brand-champagne/40 to-brand-mocha",
+      "Des locs artificielles fermement enroulées pour un rendu net et défini, une alternative durable et élégante aux vraies dreadlocks.",
+    duration: "6 à 8 heures",
+    priceFrom: 205,
+    withExtensions: true,
+    addons: ["Lavage", "Traitement", "Dépose"],
+    tone: "from-brand-black to-brand-champagne/20",
+    collection: "locs",
+    availableFor: ["femmes"],
   },
 ];
