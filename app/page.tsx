@@ -1,20 +1,20 @@
+import { LifestyleHero } from "@/components/lifestyle-hero";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { PageHeader } from "@/components/page-header";
-import { AboutStory } from "@/components/about-story";
-import { Founder } from "@/components/founder";
+import { Divisions } from "@/components/divisions";
+import { GalleryPreview } from "@/components/gallery-preview";
+import { Testimonials } from "@/components/testimonials";
+import { Cta } from "@/components/cta";
 
-export default function AboutPage() {
+export default function Home() {
   return (
     <main>
       <Navbar />
-      <PageHeader
-        eyebrow="DKY Lifestyle"
-        title="À propos de nous"
-        description="Découvre l'histoire, la mission et la vision derrière DKY Lifestyle."
-      />
-      <AboutStory />
-      <Founder />
+      <LifestyleHero />
+      <Divisions />
+      <GalleryPreview />
+      <Testimonials />
+      <Cta />
       <Footer />
     </main>
   );

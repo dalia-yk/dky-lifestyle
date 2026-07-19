@@ -70,11 +70,11 @@ export function Footer() {
             ))}
           </div>
           
-            <a href="mailto:contact@dkyhair.ca"
+            <a href="mailto:dkylifestyle@gmail.com"
             className="flex items-center gap-2 font-sans text-brand-ivory/70 hover:text-brand-champagne text-sm transition-colors"
           >
             <Mail size={16} />
-            contact@dkyhair.ca
+            dkylifestyle@gmail.com
           </a>
         </div>
       </div>

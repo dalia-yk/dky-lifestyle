@@ -6,9 +6,10 @@ interface PageHeaderProps {
   eyebrow: string;
   title: string;
   description?: string;
+  tagline?: string;
 }
 
-export function PageHeader({ eyebrow, title, description }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, description, tagline }: PageHeaderProps) {
   return (
     <section className="bg-brand-black pt-40 pb-20 px-6">
       <motion.div
@@ -27,6 +28,9 @@ export function PageHeader({ eyebrow, title, description }: PageHeaderProps) {
           <p className="font-sans text-brand-ivory/70 text-base md:text-lg">
             {description}
           </p>
+        )}
+        {tagline && (
+            <p className="font-heading itralic text-brand-champagne text=lg md:text-xl"> {tagline} </p>
         )}
       </motion.div>
     </section>
