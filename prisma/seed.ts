@@ -16,8 +16,8 @@ async function main() {
         tagline: service.tagline,
         description: service.description,
         duration: service.duration,
-        priceForm: service.priceFrom,
-        withExtension: service.withExtensions,
+        priceFrom: service.priceFrom,
+        withExtensions: service.withExtensions,
         collection: service.collection,
       },
     });

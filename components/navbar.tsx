@@ -53,9 +53,11 @@ export function Navbar() {
             </Link>
           ))}
           {isHairSection && (
-            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-6">
-              Réserver
-            </Button>
+            <Link href="/hair/reservation">
+              <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-6">
+                Réserver
+              </Button>
+            </Link>
           )}
         </div>
 
@@ -83,9 +85,11 @@ export function Navbar() {
             </Link>
           ))}
           {isHairSection && (
-            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full w-full">
-              Réserver
-            </Button>
+            <Link href="/hair/reservation" onClick={() => setIsOpen(false)}>
+              <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full w-full">
+                Réserver
+              </Button>
+            </Link>
           )}
         </div>
       )}
