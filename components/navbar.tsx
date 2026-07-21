@@ -17,7 +17,7 @@ const hairLinks = [
   { label: "Accueil", href: "/hair" },
   { label: "Services", href: "/hair/services" },
   { label: "Galerie", href: "/hair/galerie" },
-  { label: "Réservation", href: "/hair/reservation" },
+  { label: "FAQ", href: "/hair/faq" },
   { label: "Contact", href: "/hair/contact" },
 ];
 
