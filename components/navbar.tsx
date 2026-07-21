@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Show, SignInButton, UserButton } from "@clerk/nextjs";
 
 const lifestyleLinks = [
   { label: "Accueil", href: "/" },
@@ -59,6 +60,16 @@ export function Navbar() {
               </Button>
             </Link>
           )}
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button className="font-sans text-brand-ivory/80 hover:text-brand-champagne text-sm uppercase tracking-wide transition-colors">
+                Connexion
+              </button>
+            </SignInButton>
+          </Show>
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
         </div>
 
         {/* Bouton menu mobile */}
