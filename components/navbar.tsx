@@ -60,6 +60,16 @@ export function Navbar() {
               </Button>
             </Link>
           )}
+          {isHairSection && (
+            <Show when="signed-in">
+              <Link
+                href="/hair/compte"
+                className="font-sans text-brand-ivory/80 hover:text-brand-champagne text-sm uppercase tracking-wide transition-colors"
+              >
+                Mon compte
+              </Link>
+            </Show>
+          )}
           <Show when="signed-out">
             <SignInButton mode="modal">
               <button className="font-sans text-brand-ivory/80 hover:text-brand-champagne text-sm uppercase tracking-wide transition-colors">
