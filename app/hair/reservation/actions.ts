@@ -3,8 +3,13 @@
 import { redirect } from "next/navigation";
 import { Resend } from "resend";
 import { prisma } from "../../../lib/prisma";
+import { BookingCreatedEmail } from "@/emails/booking-created";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+function formatBookingNumber(seq: number, date: Date) {
+  return `DKY-${date.getFullYear()}-${String(seq).padStart(5, "0")}`;
+}
 
 export async function createBooking(formData: FormData) {
   const serviceId = formData.get("serviceId") as string;
@@ -47,47 +52,49 @@ export async function createBooking(formData: FormData) {
     },
   });
 
-  const dateLabel = new Date(date).toLocaleDateString("fr-CA", {
+  const bookingNumber = formatBookingNumber(booking.bookingSeq, booking.createdAt);
+
+  const dateLabel = booking.date.toLocaleDateString("fr-CA", {
     weekday: "long",
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
-  // Email à l'admin (toi)
+  const locationLabel =
+    booking.locationType === "HOME" ? "À domicile" : "Studio DKY Hair";
+
   try {
     await resend.emails.send({
       from: "DKY Hair <onboarding@resend.dev>",
       to: "dkylifestyle@gmail.com",
-      subject: `Nouvelle réservation — ${service.name}`,
+      subject: `Nouvelle réservation ${bookingNumber} — ${service.name}`,
       html: `
-        <h2>Nouvelle réservation reçue</h2>
         <p><strong>Cliente :</strong> ${name} (${email}, ${phone})</p>
         <p><strong>Coiffure :</strong> ${service.name}</p>
         <p><strong>Date :</strong> ${dateLabel} à ${time}</p>
-        <p><strong>Prix total :</strong> ${totalPrice}$</p>
-        <p><strong>Dépôt demandé :</strong> ${depositAmount}$</p>
+        <p><strong>Dépôt :</strong> ${depositAmount}$</p>
       `,
     });
 
-    // Email à la cliente
     await resend.emails.send({
       from: "DKY Hair <onboarding@resend.dev>",
       to: email,
-      subject: "Ta réservation DKY Hair est enregistrée !",
-      html: `
-        <h2>Merci ${name} !</h2>
-        <p>Ta réservation pour <strong>${service.name}</strong> est bien enregistrée.</p>
-        <p><strong>Date :</strong> ${dateLabel} à ${time}</p>
-        <p><strong>Prix total :</strong> ${totalPrice}$</p>
-        <p><strong>Dépôt requis :</strong> ${depositAmount}$</p>
-        <p>Nous avons hâte de t'accueillir !</p>
-        <p><em>DKY Hair — Crafted by Purpose</em></p>
-      `,
+      subject: `Ta réservation ${bookingNumber} est enregistrée !`,
+      react: BookingCreatedEmail({
+        clientName: name,
+        bookingNumber,
+        serviceName: service.name,
+        dateLabel,
+        time,
+        locationLabel,
+        totalPrice,
+        depositAmount,
+        remainingBalance,
+      }),
     });
   } catch (error) {
     console.error("Erreur d'envoi d'email :", error);
-    // On ne bloque pas la réservation si l'email échoue
   }
 
   redirect(`/hair/reservation/confirmation?bookingId=${booking.id}`);

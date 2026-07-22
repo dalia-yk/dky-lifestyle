@@ -1,4 +1,5 @@
 import { prisma } from "../../../../lib/prisma";
+import { BookingActions } from "@/components/admin/booking-actions";
 
 export default async function AdminBookingsPage() {
   const bookings = await prisma.booking.findMany({
@@ -30,6 +31,9 @@ export default async function AdminBookingsPage() {
               </th>
               <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">
                 Dépôt
+              </th>
+              <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">
+                Actions
               </th>
             </tr>
           </thead>
@@ -64,6 +68,12 @@ export default async function AdminBookingsPage() {
                   >
                     {booking.status}
                   </span>
+                </td>
+                <td className="p-4">
+                  <BookingActions
+                    bookingId={booking.id}
+                    currentStatus={booking.status}
+                  />
                 </td>
                 <td className="font-sans text-brand-champagne text-sm p-4">
                   {booking.depositAmount}$

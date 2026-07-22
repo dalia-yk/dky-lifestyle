@@ -38,6 +38,7 @@ model Client {
 
 model Booking {
   id                String        @id @default(cuid())
+  bookingSeq        Int           @default(autoincrement())
   client            Client        @relation(fields: [clientId], references: [id])
   clientId          String
   service           Service       @relation(fields: [serviceId], references: [id])
