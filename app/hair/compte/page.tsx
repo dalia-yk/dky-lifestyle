@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { prisma } from "../../../lib/prisma";
+import Link from "next/link";
 
 export default async function MonComptePage() {
   const user = await currentUser();
@@ -72,9 +73,10 @@ export default async function MonComptePage() {
             ) : (
               <div className="flex flex-col gap-4">
                 {upcomingBookings.map((booking) => (
-                  <div
+                   <Link
                     key={booking.id}
-                    className="bg-white rounded-2xl border border-brand-champagne/20 p-6 flex justify-between items-center"
+                    href={`/hair/compte/${booking.id}`}
+                    className="bg-white rounded-2xl border border-brand-champagne/20 p-6 flex justify-between items-center hover:border-brand-champagne/50 transition-all"
                   >
                     <div>
                       <p className="font-heading text-brand-black text-lg">
@@ -96,7 +98,7 @@ export default async function MonComptePage() {
                     >
                       {booking.status}
                     </span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

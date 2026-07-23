@@ -20,7 +20,11 @@ model Service {
   description String
   duration String
   priceFrom Int
-  withExtensions Boolean
+  priceWithoutExtensions Int?
+  extensionsMode ExtensionsMode @default(OPTIONAL)
+  requiresLength Boolean  @default(true)
+  requiresSize   Boolean  @default(true)
+  extensionFee   Int      @default(0)
   collection String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt 
@@ -81,4 +85,10 @@ enum PaymentStatus {
   PENDING
   DEPOSIT_REQUESTED
   PAID
+}
+
+enum ExtensionsMode {
+  REQUIRED
+  OPTIONAL
+  NOT_ALLOWED
 }

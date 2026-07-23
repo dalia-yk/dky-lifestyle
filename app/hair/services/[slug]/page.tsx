@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Clock, DollarSign, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
@@ -95,9 +96,11 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             </div>
           </div>
 
-          <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-8 py-6 text-base">
-            Réserver ce service
-          </Button>
+          <Link href={`/hair/reservation?serviceId=${service.id}`}>
+            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-8 py-6 text-base">
+              Réserver ce service
+            </Button>
+          </Link>
         </div>
       </section>
 

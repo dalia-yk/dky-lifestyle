@@ -1,8 +1,8 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/page-header";
-import { BookingForm } from "@/components/booking-form";
 import { prisma } from "../../../lib/prisma";
+import { BookingWizard } from "@/components/booking-wizard/booking-wizard";
 
 export default async function ReservationPage() {
   const services = await prisma.service.findMany({
@@ -11,6 +11,12 @@ export default async function ReservationPage() {
       name: true,
       priceFrom: true,
       duration: true,
+      collection: true,
+      extensionFee: true,
+      extensionsMode: true,
+      requiresLength: true,
+      requiresSize: true,
+      priceWithoutExtensions: true,
     },
     orderBy: { name: "asc" },
   });
@@ -26,7 +32,7 @@ export default async function ReservationPage() {
 
       <section className="bg-brand-black py-20 px-6">
         <div className="max-w-xl mx-auto">
-          <BookingForm services={services} />
+          <BookingWizard services={services} />
         </div>
       </section>
 
