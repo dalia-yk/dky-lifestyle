@@ -12,25 +12,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model Service {
-  id String @id @default(cuid())
-  slug String @unique
-  name String
-  tagline String
-  description String
-  duration String
-  priceFrom Int
-  priceWithoutExtensions Int?
-  extensionsMode ExtensionsMode @default(OPTIONAL)
-  requiresLength Boolean  @default(true)
-  requiresSize   Boolean  @default(true)
-  extensionFee   Int      @default(0)
-  collection String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt 
-  bookings Booking[]
-}
-
 model Client {
   id        String    @id @default(cuid())
   name      String
@@ -40,6 +21,54 @@ model Client {
   bookings  Booking[]
 }
 
+enum ServiceCategory {
+  COLLECTION
+  HAIR_CARE
+  PREPARATION
+}
+
+model Service {
+  id                      String          @id @default(cuid())
+  slug                    String          @unique
+  name                    String
+  tagline                 String
+  description             String
+  duration                String
+  priceFrom               Int
+  priceWithoutExtensions  Int?
+  extensionFee            Int             @default(0)
+  extensionsMode          ExtensionsMode  @default(OPTIONAL)
+  requiresLength          Boolean         @default(true)
+  requiresSize            Boolean         @default(true)
+  category                ServiceCategory @default(COLLECTION)
+  collection              String
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  bookings                Booking[]
+  compatiblePackages      Package[]       @relation("PackageCompatibleServices")
+  availableFor Audience[]
+}
+
+model AddOn {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  price    Int
+  bookings Booking[] @relation("BookingAddOns")
+  packages Package[] @relation("PackageAddOns")
+}
+
+model Package {
+  id                  String    @id @default(cuid())
+  name                String
+  tagline             String
+  featured            Boolean   @default(false)
+  price               Int       @default(0)
+  includesPremiumHair Boolean   @default(false)
+  includedAddOns      AddOn[]   @relation("PackageAddOns")
+  compatibleServices  Service[] @relation("PackageCompatibleServices")
+  bookings            Booking[]
+}
+
 model Booking {
   id                String        @id @default(cuid())
   bookingSeq        Int           @default(autoincrement())
@@ -47,15 +76,17 @@ model Booking {
   clientId          String
   service           Service       @relation(fields: [serviceId], references: [id])
   serviceId         String
+  package           Package?      @relation(fields: [packageId], references: [id])
+  packageId         String?
   date              DateTime
   time              String
   status            BookingStatus @default(PENDING)
-  category          String?
+  category           String?
   size              String?
   length            String?
   hairOption        String?
   hairColor         String?
-  addOns            String[]
+  addOns            AddOn[]       @relation("BookingAddOns")
   locationType      LocationType  @default(SALON)
   address           String?
   inspirationPhotos String[]
@@ -91,4 +122,10 @@ enum ExtensionsMode {
   REQUIRED
   OPTIONAL
   NOT_ALLOWED
+}
+
+enum Audience {
+  FEMMES
+  HOMMES
+  ENFANTS
 }

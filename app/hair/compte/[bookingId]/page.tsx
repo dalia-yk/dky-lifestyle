@@ -23,7 +23,7 @@ export default async function BookingDetailPage({ params }: DetailPageProps) {
 
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    include: { client: true, service: true },
+    include: { client: true, service: true, addOns: true, package: true },
   });
 
   if (!booking || booking.client.email !== userEmail) {
@@ -71,10 +71,18 @@ export default async function BookingDetailPage({ params }: DetailPageProps) {
                 }
               </span>
             </div>
+            {booking.package && (
+              <div className="flex justify-between">
+                <span className="font-sans text-brand-mocha/60 text-sm">Forfait</span>
+                <span className="font-sans text-brand-black text-sm">{booking.package.name}</span>
+              </div>
+            )}
             {booking.addOns.length > 0 && (
               <div className="flex justify-between">
                 <span className="font-sans text-brand-mocha/60 text-sm">Add-ons</span>
-                <span className="font-sans text-brand-black text-sm">{booking.addOns.join(", ")}</span>
+                <span className="font-sans text-brand-black text-sm">
+                  {booking.addOns.map((a) => a.name).join(", ")}
+                </span>
               </div>
             )}
             <div className="flex justify-between">

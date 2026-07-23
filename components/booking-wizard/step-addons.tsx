@@ -2,23 +2,30 @@
 
 import { BookingWizardData } from "@/types/booking-wizard";
 import { Button } from "@/components/ui/button";
-import { addOnsList } from "@/data/addons";
+
+interface AddOnOption {
+  id: string;
+  name: string;
+  price: number;
+}
 
 interface StepProps {
   data: BookingWizardData;
   updateData: (fields: Partial<BookingWizardData>) => void;
   onNext: () => void;
   onBack: () => void;
+  addOns: AddOnOption[];
+  lockedAddOnIds: string[];
 }
 
-
-export function StepAddOns({ data, updateData, onNext, onBack }: StepProps) {
-  function toggleAddOn(addOn: string) {
-    const isSelected = data.addOns.includes(addOn);
-    const newAddOns = isSelected
-      ? data.addOns.filter((a) => a !== addOn)
-      : [...data.addOns, addOn];
-    updateData({ addOns: newAddOns });
+export function StepAddOns({ data, updateData, onNext, onBack, addOns, lockedAddOnIds }: StepProps) {
+  function toggleAddOn(id: string) {
+    if (lockedAddOnIds.includes(id)) return;
+    const isSelected = data.addOnIds.includes(id);
+    const newIds = isSelected
+      ? data.addOnIds.filter((a) => a !== id)
+      : [...data.addOnIds, id];
+    updateData({ addOnIds: newIds });
   }
 
   return (
@@ -31,23 +38,30 @@ export function StepAddOns({ data, updateData, onNext, onBack }: StepProps) {
       </p>
 
       <div className="flex flex-col gap-3 mb-8">
-        {addOnsList.map((addOn) => {
-          const isSelected = data.addOns.includes(addOn.value);
+        {addOns.map((addOn) => {
+          const isLocked = lockedAddOnIds.includes(addOn.id);
+          const isSelected = data.addOnIds.includes(addOn.id) || isLocked;
           return (
             <button
-              key={addOn.value}
-              onClick={() => toggleAddOn(addOn.value)}
+              key={addOn.id}
+              onClick={() => toggleAddOn(addOn.id)}
+              disabled={isLocked}
               className={`flex justify-between items-center text-left p-5 rounded-2xl border transition-all ${
                 isSelected
                   ? "border-brand-champagne bg-brand-champagne/10"
                   : "border-brand-ivory/20 hover:border-brand-champagne/50"
-              }`}
+              } ${isLocked ? "opacity-70 cursor-default" : ""}`}
             >
               <span className="font-heading text-brand-ivory text-lg">
-                {addOn.value}
+                {addOn.name}
+                {isLocked && (
+                  <span className="font-sans text-brand-champagne text-xs ml-2">
+                    (inclus dans ton forfait)
+                  </span>
+                )}
               </span>
               <span className="font-sans text-brand-champagne text-sm">
-                +{addOn.price}$
+                {isLocked ? "Inclus" : `+${addOn.price}$`}
               </span>
             </button>
           );

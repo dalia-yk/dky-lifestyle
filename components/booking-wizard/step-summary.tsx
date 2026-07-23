@@ -2,46 +2,65 @@
 
 import { useState } from "react";
 import { BookingWizardData } from "@/types/booking-wizard";
-import { addOnsList } from "@/data/addons";
 import { Button } from "@/components/ui/button";
-import { createBookingFromWizard } from "@/app/hair/reservation/wizard-actions";
-import { updateBookingFromWizard } from "@/app/hair/reservation/wizard-actions";
+import { createBookingFromWizard, updateBookingFromWizard } from "@/app/hair/reservation/wizard-actions";
 
 interface ServiceOption {
   id: string;
   name: string;
   priceFrom: number;
-  extensionFee: number;
   priceWithoutExtensions: number | null;
+  extensionFee: number;
+}
+
+interface AddOnOption {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface PackageOption {
+  id: string;
+  name: string;
+  price: number;
+  includesPremiumHair: boolean;
+  includedAddOns: { id: string; name: string }[];
 }
 
 interface StepProps {
   data: BookingWizardData;
   services: ServiceOption[];
+  addOns: AddOnOption[];
+  packages: PackageOption[];
   onBack: () => void;
   mode: "create" | "edit";
   bookingId?: string;
 }
 
-export function StepSummary({ data, services, onBack, mode, bookingId }: StepProps) {
+export function StepSummary({ data, services, addOns, packages, onBack, mode, bookingId }: StepProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const service = services.find((s) => s.id === data.serviceId);
+  const selectedPackage = packages.find((p) => p.id === data.packageId);
 
-  const addOnsTotal = data.addOns.reduce((sum, name) => {
-    const addOn = addOnsList.find((a) => a.value === name);
-    return sum + (addOn?.price ?? 0);
-  }, 0);
+  const selectedAddOns = addOns.filter((a) => data.addOnIds.includes(a.id));
+  const extraAddOns = selectedPackage
+    ? selectedAddOns.filter(
+        (a) => !selectedPackage.includedAddOns.some((included) => included.id === a.id)
+      )
+    : selectedAddOns;
 
   let basePrice = service?.priceFrom ?? 0;
   let extensionFee = 0;
 
   if (data.hairOption === "none") {
     basePrice = service?.priceWithoutExtensions ?? service?.priceFrom ?? 0;
-  } else if (data.hairOption === "dky-provides") {
+  } else if (data.hairOption === "dky-provides" && !selectedPackage?.includesPremiumHair) {
     extensionFee = service?.extensionFee ?? 0;
   }
 
-  const totalPrice = basePrice + extensionFee + addOnsTotal;
+  const packagePrice = selectedPackage?.price ?? 0;
+  const extraAddOnsTotal = extraAddOns.reduce((sum, a) => sum + a.price, 0);
+  const totalPrice = basePrice + extensionFee + packagePrice + extraAddOnsTotal;
   const depositAmount = Math.round(totalPrice * 0.2);
 
   async function handleSubmit() {
@@ -64,34 +83,13 @@ export function StepSummary({ data, services, onBack, mode, bookingId }: StepPro
 
       <div className="bg-white/5 border border-brand-champagne/20 rounded-2xl p-6 flex flex-col gap-3 mb-6">
         <div className="flex justify-between">
-          <span className="font-sans text-brand-ivory/60 text-sm">Coiffure</span>
+          <span className="font-sans text-brand-ivory/60 text-sm">Service principal</span>
           <span className="font-sans text-brand-ivory text-sm">{service?.name}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="font-sans text-brand-ivory/60 text-sm">Taille / Longueur</span>
-          <span className="font-sans text-brand-ivory text-sm">{data.size} / {data.length}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-sans text-brand-ivory/60 text-sm">Mèches</span>
           <span className="font-sans text-brand-ivory text-sm">
-            {data.hairOption === "dky-provides"
-              ? `DKY (${data.hairColor})`
-              : data.hairOption === "client-provides"
-              ? "Apportées"
-              : "Aucune"
-            }
-          </span>
-        </div>
-        {data.addOns.length > 0 && (
-          <div className="flex justify-between">
-            <span className="font-sans text-brand-ivory/60 text-sm">Add-ons</span>
-            <span className="font-sans text-brand-ivory text-sm">{data.addOns.join(", ")}</span>
-          </div>
-        )}
-        <div className="flex justify-between">
-          <span className="font-sans text-brand-ivory/60 text-sm">Lieu</span>
-          <span className="font-sans text-brand-ivory text-sm">
-            {data.locationType === "HOME" ? data.address : "Studio DKY Hair"}
+            {data.hairOption === "dky-provides" ? `DKY (${data.hairColor})` : data.hairOption === "client-provides" ? "Apportées" : "Aucune"}
           </span>
         </div>
         <div className="flex justify-between">
@@ -100,17 +98,43 @@ export function StepSummary({ data, services, onBack, mode, bookingId }: StepPro
         </div>
       </div>
 
+      {selectedPackage && (
+        <div className="bg-brand-champagne/10 border border-brand-champagne/30 rounded-2xl p-6 mb-6">
+          <div className="flex justify-between items-center mb-2">
+            <p className="font-heading text-brand-champagne text-lg">Forfait {selectedPackage.name}</p>
+            <p className="font-sans text-brand-champagne text-sm">+{selectedPackage.price}$</p>
+          </div>
+          <p className="font-sans text-brand-ivory/60 text-xs uppercase tracking-widest mb-2">Comprend</p>
+          <ul className="flex flex-col gap-1">
+            {selectedPackage.includedAddOns.map((a) => (
+              <li key={a.id} className="font-sans text-brand-ivory text-sm">✓ {a.name}</li>
+            ))}
+            {selectedPackage.includesPremiumHair && (
+              <li className="font-sans text-brand-ivory text-sm">✓ Mèches premium DKY</li>
+            )}
+          </ul>
+        </div>
+      )}
+
+      {extraAddOns.length > 0 && (
+        <div className="bg-white/5 border border-brand-champagne/20 rounded-2xl p-6 mb-6">
+          <p className="font-sans text-brand-ivory/60 text-xs uppercase tracking-widest mb-2">Extras</p>
+          <ul className="flex flex-col gap-1">
+            {extraAddOns.map((a) => (
+              <li key={a.id} className="flex justify-between font-sans text-brand-ivory text-sm">
+                <span>{a.name}</span>
+                <span>+{a.price}$</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="bg-white/5 border border-brand-champagne/30 rounded-2xl p-6 flex flex-col gap-2 mb-8">
         <div className="flex justify-between font-sans text-sm">
           <span className="text-brand-ivory/70">Prix total</span>
           <span className="text-brand-ivory">{totalPrice}$</span>
         </div>
-        {extensionFee > 0 && (
-          <div className="flex justify-between font-sans text-sm">
-            <span className="text-brand-ivory/70">Mèches premium DKY</span>
-            <span className="text-brand-ivory">+{extensionFee}$</span>
-          </div>
-        )}
         <div className="flex justify-between font-sans text-sm font-medium">
           <span className="text-brand-champagne">Dépôt requis (20%)</span>
           <span className="text-brand-champagne">{depositAmount}$</span>
@@ -122,11 +146,7 @@ export function StepSummary({ data, services, onBack, mode, bookingId }: StepPro
           Retour
         </Button>
         <Button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full py-6 disabled:opacity-60">
-          {isSubmitting
-            ? "Envoi en cours..."
-            : mode === "edit"
-            ? "Enregistrer les modifications"
-            : "Confirmer la réservation"}
+          {isSubmitting ? "Envoi en cours..." : mode === "edit" ? "Enregistrer les modifications" : "Confirmer la réservation"}
         </Button>
       </div>
     </div>

@@ -2,19 +2,20 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { PageHeader } from "@/components/page-header";
 import { ServiceGrid } from "@/components/service-grid";
-import { services } from "@/data/service";
+import { prisma } from "../../../../lib/prisma";
 
-export default function CollectionsPage() {
+export default async function CollectionsPage() {
+  const services = await prisma.service.findMany({
+    where: { category: "COLLECTION" },
+    orderBy: { name: "asc" },
+  });
+
   const braids = services.filter((s) => s.collection === "braids");
   const twist = services.filter((s) => s.collection === "twist");
   const locs = services.filter((s) => s.collection === "locs");
 
-  const menSelection = services.filter((s) =>
-    s.availableFor.includes("hommes")
-  );
-  const kidsSelection = services.filter((s) =>
-    s.availableFor.includes("enfants")
-  );
+  const menSelection = services.filter((s) => s.availableFor.includes("HOMMES"));
+  const kidsSelection = services.filter((s) => s.availableFor.includes("ENFANTS"));
 
   return (
     <main>

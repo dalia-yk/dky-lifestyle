@@ -5,7 +5,8 @@ export interface BookingWizardData {
   length: "shoulder" | "mid-back" | "waist" | null;
   hairOption: "client-provides" | "dky-provides" | "none" | null;
   hairColor: string | null;
-  addOns: string[];
+  addOnIds: string[];
+  packageId: string | null;
   locationType: "SALON" | "HOME";
   address: string;
   date: string;
@@ -22,7 +23,8 @@ export const initialWizardData: BookingWizardData = {
   length: null,
   hairOption: null,
   hairColor: null,
-  addOns: [],
+  addOnIds: [],
+  packageId: null,
   locationType: "SALON",
   address: "",
   date: "",

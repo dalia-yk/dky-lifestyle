@@ -6,6 +6,7 @@ import {
   initialWizardData,
 } from "@/types/booking-wizard";
 import { StepServiceSelection } from "./step-service-selection";
+import { StepPackage } from "./step-package";
 import { StepExtensionsChoice } from "./step-extensions-choice";
 import { StepHairOption } from "./step-hair-option";
 import { StepHairColor } from "./step-hair-color";
@@ -21,18 +22,39 @@ interface ServiceOption {
   id: string;
   name: string;
   priceFrom: number;
+  priceWithoutExtensions: number | null;
   duration: string;
   collection: string;
   extensionFee: number;
   extensionsMode: "REQUIRED" | "OPTIONAL" | "NOT_ALLOWED";
   requiresLength: boolean;
   requiresSize: boolean;
-  priceWithoutExtensions: number | null;
+  category: "COLLECTION" | "HAIR_CARE" | "PREPARATION";
+}
+
+interface AddOnOption {
+  id: string;
+  name: string;
+  price: number;
+}
+
+interface PackageOption {
+  id: string;
+  name: string;
+  tagline: string;
+  featured: boolean;
+  price: number;
+  includesPremiumHair: boolean;
+  includedAddOns: { id: string; name: string }[];
+  compatibleServices: { id: string }[];
 }
 
 interface BookingWizardProps {
   services: ServiceOption[];
+  addOns: AddOnOption[];
+  packages: PackageOption[];
   preselectedServiceId?: string;
+  preselectedPackageId?: string;
   mode?: "create" | "edit";
   bookingId?: string;
   initialData?: BookingWizardData;
@@ -40,6 +62,7 @@ interface BookingWizardProps {
 
 type StepKey =
   | "service"
+  | "package"
   | "extensionsChoice"
   | "hairOption"
   | "hairColor"
@@ -53,38 +76,64 @@ type StepKey =
 
 export function BookingWizard({
   services,
+  addOns,
+  packages,
   preselectedServiceId,
+  preselectedPackageId,
   mode = "create",
   bookingId,
   initialData,
 }: BookingWizardProps) {
-  const preselected = services.find((s) => s.id === preselectedServiceId);
+  const preselectedService = services.find((s) => s.id === preselectedServiceId);
+  const preselectedPackage = packages.find((p) => p.id === preselectedPackageId);
 
   const [data, setData] = useState<BookingWizardData>(
     initialData ?? {
       ...initialWizardData,
-      serviceId: preselected?.id ?? null,
+      serviceId: preselectedService?.id ?? null,
       collection:
-        (preselected?.collection as BookingWizardData["collection"]) ?? null,
+        (preselectedService?.collection as BookingWizardData["collection"]) ?? null,
+      packageId: preselectedPackage?.id ?? null,
+      hairOption: preselectedPackage?.includesPremiumHair ? "dky-provides" : null,
     }
   );
 
   const selectedService = services.find((s) => s.id === data.serviceId);
+  const selectedPackage = packages.find((p) => p.id === data.packageId);
 
-  // Calcule la liste des étapes pertinentes pour CE service précis, à cet instant
+  const compatiblePackages = useMemo(() => {
+    if (!selectedService) return [];
+    return packages.filter((pkg) =>
+      pkg.compatibleServices.some((s) => s.id === selectedService.id)
+    );
+  }, [packages, selectedService]);
+
+  const lockedAddOnIds = useMemo(() => {
+    return selectedPackage ? selectedPackage.includedAddOns.map((a) => a.id) : [];
+  }, [selectedPackage]);
+
   const visibleSteps = useMemo<StepKey[]>(() => {
     const stepsList: StepKey[] = ["service"];
 
     if (selectedService) {
-      if (selectedService.extensionsMode === "OPTIONAL") {
-        stepsList.push("extensionsChoice");
+      if (compatiblePackages.length > 0 && !preselectedPackage) {
+        stepsList.push("package");
       }
-      if (
-        selectedService.extensionsMode !== "NOT_ALLOWED" &&
-        data.hairOption !== "none"
-      ) {
-        stepsList.push("hairOption");
+
+      const skipHairQuestions = selectedPackage?.includesPremiumHair ?? false;
+
+      if (!skipHairQuestions) {
+        if (selectedService.extensionsMode === "OPTIONAL") {
+          stepsList.push("extensionsChoice");
+        }
+        if (
+          selectedService.extensionsMode !== "NOT_ALLOWED" &&
+          data.hairOption !== "none"
+        ) {
+          stepsList.push("hairOption");
+        }
       }
+
       if (data.hairOption === "dky-provides") {
         stepsList.push("hairColor");
       }
@@ -98,9 +147,9 @@ export function BookingWizard({
 
     stepsList.push("addons", "location", "datetime", "personalInfo", "summary");
     return stepsList;
-  }, [selectedService, data.hairOption]);
+  }, [selectedService, selectedPackage, compatiblePackages, data.hairOption, preselectedPackage]);
 
-  const [currentIndex, setCurrentIndex] = useState(preselected ? 1 : 0);
+  const [currentIndex, setCurrentIndex] = useState(preselectedService ? 1 : 0);
 
   function updateData(fields: Partial<BookingWizardData>) {
     setData((prev) => ({ ...prev, ...fields }));
@@ -123,11 +172,18 @@ export function BookingWizard({
           <span className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest">
             Étape {currentIndex + 1} / {visibleSteps.length}
           </span>
-          {selectedService && (
-            <span className="font-sans text-brand-champagne text-xs">
-              {selectedService.name}
-            </span>
-          )}
+          <div className="flex gap-2 items-center">
+            {selectedPackage && (
+              <span className="font-sans text-brand-champagne text-xs">
+                {selectedPackage.name}
+              </span>
+            )}
+            {selectedService && (
+              <span className="font-sans text-brand-ivory/60 text-xs">
+                {selectedService.name}
+              </span>
+            )}
+          </div>
         </div>
         <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
           <div
@@ -139,6 +195,9 @@ export function BookingWizard({
 
       {currentKey === "service" && (
         <StepServiceSelection services={services} data={data} updateData={updateData} onNext={goNext} />
+      )}
+      {currentKey === "package" && (
+        <StepPackage data={data} updateData={updateData} onNext={goNext} onBack={goBack} packages={compatiblePackages} />
       )}
       {currentKey === "extensionsChoice" && (
         <StepExtensionsChoice data={data} updateData={updateData} onNext={goNext} onBack={goBack} />
@@ -156,7 +215,7 @@ export function BookingWizard({
         <StepLength data={data} updateData={updateData} onNext={goNext} onBack={goBack} />
       )}
       {currentKey === "addons" && (
-        <StepAddOns data={data} updateData={updateData} onNext={goNext} onBack={goBack} />
+        <StepAddOns data={data} updateData={updateData} onNext={goNext} onBack={goBack} addOns={addOns} lockedAddOnIds={lockedAddOnIds} />
       )}
       {currentKey === "location" && (
         <StepLocation data={data} updateData={updateData} onNext={goNext} onBack={goBack} />
@@ -168,7 +227,7 @@ export function BookingWizard({
         <StepPersonalInfo data={data} updateData={updateData} onNext={goNext} onBack={goBack} />
       )}
       {currentKey === "summary" && (
-        <StepSummary data={data} services={services} onBack={goBack} mode={mode} bookingId={bookingId} />
+        <StepSummary data={data} services={services} addOns={addOns} packages={packages} onBack={goBack} mode={mode} bookingId={bookingId} />
       )}
     </div>
   );

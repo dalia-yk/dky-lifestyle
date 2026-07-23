@@ -22,7 +22,7 @@ export default async function ModifyBookingPage({ params }: EditPageProps) {
 
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
-    include: { client: true },
+    include: { client: true, addOns: true },
   });
 
   if (!booking || booking.client.email !== userEmail) {
@@ -40,9 +40,28 @@ export default async function ModifyBookingPage({ params }: EditPageProps) {
       extensionsMode: true,
       requiresLength: true,
       requiresSize: true,
+      category: true,
       priceWithoutExtensions: true,
     },
     orderBy: { name: "asc" },
+  });
+
+  const addOns = await prisma.addOn.findMany({
+    select: { id: true, name: true, price: true },
+    orderBy: { name: "asc" },
+  });
+
+  const packages = await prisma.package.findMany({
+    select: {
+      id: true,
+      name: true,
+      tagline: true,
+      featured: true,
+      price: true,
+      includesPremiumHair: true,
+      includedAddOns: { select: { id: true, name: true } },
+      compatibleServices: { select: { id: true } },
+    },
   });
 
   const initialData: BookingWizardData = {
@@ -52,7 +71,8 @@ export default async function ModifyBookingPage({ params }: EditPageProps) {
     length: booking.length as BookingWizardData["length"],
     hairOption: booking.hairOption as BookingWizardData["hairOption"],
     hairColor: booking.hairColor,
-    addOns: booking.addOns,
+    addOnIds: booking.addOns.map((a) => a.id),
+    packageId: booking.packageId,
     locationType: booking.locationType,
     address: booking.address ?? "",
     date: booking.date.toISOString().split("T")[0],
@@ -74,6 +94,8 @@ export default async function ModifyBookingPage({ params }: EditPageProps) {
       <section className="bg-brand-black py-20 px-6">
         <BookingWizard
           services={services}
+          addOns={addOns}
+          packages={packages}
           mode="edit"
           bookingId={booking.id}
           initialData={initialData}

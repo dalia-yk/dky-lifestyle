@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import { Clock, DollarSign } from "lucide-react";
+import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { hairCareItems } from "@/data/hair-care";
+import { prisma } from "../../../../../lib/prisma";
 
 interface HairCareDetailProps {
   params: Promise<{ slug: string }>;
@@ -13,7 +14,9 @@ export default async function HairCareDetailPage({
   params,
 }: HairCareDetailProps) {
   const { slug } = await params;
-  const item = hairCareItems.find((i) => i.slug === slug);
+  const item = await prisma.service.findFirst({
+    where: { slug, category: "HAIR_CARE" },
+  });
 
   if (!item) {
     notFound();
@@ -23,7 +26,7 @@ export default async function HairCareDetailPage({
     <main>
       <Navbar />
 
-      <section className={`bg-gradient-to-br ${item.tone} pt-40 pb-20 px-6`}>
+      <section className="bg-gradient-to-br from-brand-mocha to-brand-black pt-40 pb-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <span className="font-sans uppercase tracking-[0.3em] text-brand-champagne text-sm mb-4 block">
             Soins Capillaires
@@ -64,9 +67,11 @@ export default async function HairCareDetailPage({
             </div>
           </div>
 
-          <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-8 py-6 text-base">
-            Réserver ce soin
-          </Button>
+          <Link href={`/hair/reservation?serviceId=${item.id}`}>
+            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-8 py-6 text-base">
+              Réserver ce soin
+            </Button>
+          </Link>
         </div>
       </section>
 
@@ -75,6 +80,10 @@ export default async function HairCareDetailPage({
   );
 }
 
-export function generateStaticParams() {
-  return hairCareItems.map((item) => ({ slug: item.slug }));
+export async function generateStaticParams() {
+  const items = await prisma.service.findMany({
+    where: { category: "HAIR_CARE" },
+    select: { slug: true },
+  });
+  return items.map((item) => ({ slug: item.slug }));
 }
