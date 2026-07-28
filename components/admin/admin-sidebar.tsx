@@ -24,6 +24,7 @@ const navSections = [
       { label: "Bookings", href: "/admin/hair/bookings" },
       { label: "Services", href: "/admin/hair/services" },
       { label: "Add-ons", href: "/admin/hair/addons" },
+      { label: "Forfaits", href: "/admin/hair/packages" },
       { label: "Gallery", href: "/admin/hair/gallery" },
     ],
   },
