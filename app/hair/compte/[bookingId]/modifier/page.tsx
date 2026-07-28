@@ -42,12 +42,13 @@ export default async function ModifyBookingPage({ params }: EditPageProps) {
       requiresSize: true,
       category: true,
       priceWithoutExtensions: true,
+      durationMinutes: true,
     },
     orderBy: { name: "asc" },
   });
 
   const addOns = await prisma.addOn.findMany({
-    select: { id: true, name: true, price: true },
+    select: { id: true, name: true, price: true, durationMinutes: true },
     orderBy: { name: "asc" },
   });
 

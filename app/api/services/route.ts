@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
       requiresLength: true,
       requiresSize: true,
       category: true,
+      durationMinutes: true,
     },
     orderBy: { name: "asc" },
   });

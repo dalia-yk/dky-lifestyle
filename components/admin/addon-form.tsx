@@ -9,23 +9,26 @@ export function AddOnForm({
   addOnId,
   initialName = "",
   initialPrice = 0,
+  initialDuration = 15,
 }: {
   addOnId?: string;
   initialName?: string;
   initialPrice?: number;
+  initialDuration?: number;
 }) {
   const router = useRouter();
   const [name, setName] = useState(initialName);
   const [price, setPrice] = useState(initialPrice);
+  const [duration, setDuration] = useState(initialDuration);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setIsSubmitting(true);
     if (addOnId) {
-      await updateAddOn(addOnId, name, price);
+      await updateAddOn(addOnId, name, price, duration);
     } else {
-      await createAddOn(name, price);
+      await createAddOn(name, price, duration);
     }
   }
 
@@ -51,6 +54,16 @@ export function AddOnForm({
           required
           value={price}
           onChange={(e) => setPrice(Number(e.target.value))}
+          className={inputClass}
+        />
+      </div>
+      <div>
+        <label className="font-sans text-brand-ivory/70 text-sm mb-2 block">Durée (minutes)</label>
+        <input
+          type="number"
+          required
+          value={duration}
+          onChange={(e) => setDuration(Number(e.target.value))}
           className={inputClass}
         />
       </div>

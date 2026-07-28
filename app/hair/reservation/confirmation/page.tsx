@@ -26,12 +26,13 @@ export default async function ReservationPage({
       requiresLength: true,
       requiresSize: true,
       category: true,
+      durationMinutes: true,
     },
     orderBy: { name: "asc" },
   });
 
   const addOns = await prisma.addOn.findMany({
-    select: { id: true, name: true, price: true },
+    select: { id: true, name: true, price: true, durationMinutes: true },
     orderBy: { name: "asc" },
   });
 

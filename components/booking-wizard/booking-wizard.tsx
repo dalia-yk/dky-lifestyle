@@ -24,6 +24,7 @@ interface ServiceOption {
   priceFrom: number;
   priceWithoutExtensions: number | null;
   duration: string;
+  durationMinutes: number;
   collection: string;
   extensionFee: number;
   extensionsMode: "REQUIRED" | "OPTIONAL" | "NOT_ALLOWED";
@@ -36,6 +37,7 @@ interface AddOnOption {
   id: string;
   name: string;
   price: number;
+  durationMinutes: number;
 }
 
 interface PackageOption {
@@ -111,6 +113,14 @@ export function BookingWizard({
   const lockedAddOnIds = useMemo(() => {
     return selectedPackage ? selectedPackage.includedAddOns.map((a) => a.id) : [];
   }, [selectedPackage]);
+
+  const totalDurationMinutes = useMemo(() => {
+    const serviceDuration = selectedService?.durationMinutes ?? 60;
+    const addOnsDuration = addOns
+      .filter((a) => data.addOnIds.includes(a.id))
+      .reduce((sum, a) => sum + a.durationMinutes, 0);
+    return serviceDuration + addOnsDuration;
+  }, [selectedService, addOns, data.addOnIds]);
 
   const visibleSteps = useMemo<StepKey[]>(() => {
     const stepsList: StepKey[] = ["service"];
@@ -221,7 +231,7 @@ export function BookingWizard({
         <StepLocation data={data} updateData={updateData} onNext={goNext} onBack={goBack} />
       )}
       {currentKey === "datetime" && (
-        <StepDateTime data={data} updateData={updateData} onNext={goNext} onBack={goBack} />
+        <StepDateTime data={data} updateData={updateData} onNext={goNext} onBack={goBack} durationMinutes={totalDurationMinutes} />
       )}
       {currentKey === "personalInfo" && (
         <StepPersonalInfo data={data} updateData={updateData} onNext={goNext} onBack={goBack} />

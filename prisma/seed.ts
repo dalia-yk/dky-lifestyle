@@ -2,25 +2,37 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../lib/generated/prisma/client";
 import { services } from "@/data/service";
 
+function estimateDurationMinutes(durationText: string): number {
+  const numbers = durationText.match(/\d+/g);
+  if (!numbers) return 60;
+  const max = Math.max(...numbers.map(Number));
+  return durationText.includes("minute") ? max : max * 60;
+}
+
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // 1. Coiffures existantes (Collections)
   for (const service of services) {
+    const availableForMapped = service.availableFor.map((a) =>
+      a.toUpperCase()
+    ) as ("FEMMES" | "HOMMES" | "ENFANTS")[];
+
     await prisma.service.upsert({
       where: { slug: service.slug },
-      update: {},
+      update: { availableFor: availableForMapped, durationMinutes: estimateDurationMinutes(service.duration), },
       create: {
         slug: service.slug,
         name: service.name,
         tagline: service.tagline,
         description: service.description,
         duration: service.duration,
+        durationMinutes: estimateDurationMinutes(service.duration),
         priceFrom: service.priceFrom,
         collection: service.collection,
         category: "COLLECTION",
-        availableFor: service.availableFor.map((a) => a.toUpperCase()) as ("FEMMES" | "HOMMES" | "ENFANTS")[],
+        availableFor: availableForMapped,
       },
     });
     console.log(`✓ ${service.name} ajouté`);
@@ -28,20 +40,20 @@ async function main() {
 
   // 2. Add-ons (deviennent de vrais enregistrements)
   const addOnsData = [
-    { name: "Lavage", price: 35 },
-    { name: "Hydratation", price: 45 },
-    { name: "Traitement protéiné", price: 55 },
-    { name: "Massage du cuir chevelu", price: 25 },
-    { name: "Séchage", price: 30 },
-    { name: "Dépose", price: 40 },
-    { name: "Démêlage", price: 25 },
-    { name: "Préparation avant coiffure", price: 20 },
+    { name: "Lavage", price: 35, durationMinutes: 30 },
+    { name: "Hydratation", price: 45, durationMinutes: 30 },
+    { name: "Traitement protéiné", price: 55, durationMinutes: 45 },
+    { name: "Massage du cuir chevelu", price: 25, durationMinutes: 20 },
+    { name: "Séchage", price: 30, durationMinutes: 30 },
+    { name: "Dépose", price: 40, durationMinutes: 60 },
+    { name: "Démêlage", price: 25, durationMinutes: 45 },
+    { name: "Préparation avant coiffure", price: 20, durationMinutes: 20 },
   ];
 
   for (const addOn of addOnsData) {
     await prisma.addOn.upsert({
       where: { name: addOn.name },
-      update: { price: addOn.price },
+      update: { price: addOn.price, durationMinutes: addOn.durationMinutes },
       create: addOn,
     });
     console.log(`✓ Add-on ${addOn.name} ajouté`);
@@ -61,8 +73,13 @@ async function main() {
       where: { slug: item.slug },
       update: {},
       create: {
-        ...item,
+        slug: item.slug,
+        name: item.name,
+        tagline: item.tagline,
         description: item.tagline,
+        duration: item.duration,
+        durationMinutes: estimateDurationMinutes(item.duration),
+        priceFrom: item.priceFrom,
         collection: "hair-care",
         category: "HAIR_CARE",
         extensionsMode: "NOT_ALLOWED",
@@ -85,8 +102,13 @@ async function main() {
       where: { slug: item.slug },
       update: {},
       create: {
-        ...item,
+        slug: item.slug,
+        name: item.name,
+        tagline: item.tagline,
         description: item.tagline,
+        duration: item.duration,
+        durationMinutes: estimateDurationMinutes(item.duration),
+        priceFrom: item.priceFrom,
         collection: "preparation",
         category: "PREPARATION",
         extensionsMode: "NOT_ALLOWED",
@@ -146,7 +168,28 @@ async function main() {
         },
       });
     }
+    console.log(`✓ Forfait ${pkg.name} synchronisé`);
   }
+
+  // 6. Horaires d'ouverture par défaut
+  const defaultHours = [
+    { dayOfWeek: 0, isOpen: false, openTime: "09:00", closeTime: "17:00" },
+    { dayOfWeek: 1, isOpen: true, openTime: "09:00", closeTime: "17:00" },
+    { dayOfWeek: 2, isOpen: true, openTime: "09:00", closeTime: "17:00" },
+    { dayOfWeek: 3, isOpen: true, openTime: "09:00", closeTime: "17:00" },
+    { dayOfWeek: 4, isOpen: true, openTime: "09:00", closeTime: "17:00" },
+    { dayOfWeek: 5, isOpen: true, openTime: "09:00", closeTime: "17:00" },
+    { dayOfWeek: 6, isOpen: true, openTime: "09:00", closeTime: "15:00" },
+  ];
+
+  for (const hours of defaultHours) {
+    await prisma.businessHours.upsert({
+      where: { dayOfWeek: hours.dayOfWeek },
+      update: hours,
+      create: hours,
+    });
+  }
+  console.log("✓ Horaires d'ouverture configurés");
 }
 
 main()

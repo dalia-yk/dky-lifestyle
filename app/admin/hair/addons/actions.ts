@@ -4,14 +4,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../../lib/prisma";
 
-export async function createAddOn(name: string, price: number) {
-  await prisma.addOn.create({ data: { name, price } });
+export async function createAddOn(name: string, price: number, durationMinutes: number) {
+  await prisma.addOn.create({ data: { name, price, durationMinutes } });
   revalidatePath("/admin/hair/addons");
   redirect("/admin/hair/addons");
 }
 
-export async function updateAddOn(id: string, name: string, price: number) {
-  await prisma.addOn.update({ where: { id }, data: { name, price } });
+export async function updateAddOn(id: string, name: string, price: number, durationMinutes: number) {
+  await prisma.addOn.update({ where: { id }, data: { name, price, durationMinutes } });
   revalidatePath("/admin/hair/addons");
   redirect("/admin/hair/addons");
 }
