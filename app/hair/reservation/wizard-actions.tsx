@@ -6,6 +6,7 @@ import { Resend } from "resend";
 import { prisma } from "../../../lib/prisma";
 import { BookingCreatedEmail } from "@/emails/booking-created";
 import { BookingWizardData } from "@/types/booking-wizard";
+import { AdminNewBookingEmail } from "@/emails/admin-new-booking";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -107,12 +108,18 @@ export async function createBookingFromWizard(data: BookingWizardData) {
       from: "DKY Hair <onboarding@resend.dev>",
       to: "dkylifestyle@gmail.com",
       subject: `Nouvelle réservation ${bookingNumber} — ${service.name}`,
-      html: `
-        <p><strong>Cliente :</strong> ${data.name} (${data.email}, ${data.phone})</p>
-        <p><strong>Service :</strong> ${service.name}</p>
-        <p><strong>Date :</strong> ${dateLabel} à ${data.time}</p>
-        <p><strong>Dépôt :</strong> ${depositAmount}$</p>
-      `,
+      react: AdminNewBookingEmail({
+        bookingNumber,
+        clientName: data.name,
+        clientEmail: data.email,
+        clientPhone: data.phone,
+        serviceName: service.name,
+        dateLabel,
+        time: data.time,
+        locationLabel,
+        totalPrice,
+        depositAmount,
+      }),
     });
 
     await resend.emails.send({
