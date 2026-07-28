@@ -23,6 +23,7 @@ const navSections = [
     items: [
       { label: "Bookings", href: "/admin/hair/bookings" },
       { label: "Services", href: "/admin/hair/services" },
+      { label: "Add-ons", href: "/admin/hair/addons" },
       { label: "Gallery", href: "/admin/hair/gallery" },
     ],
   },
