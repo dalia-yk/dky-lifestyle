@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { prisma } from "../../../../lib/prisma";
 import { CancelBookingButton } from "@/components/cancel-booking-button";
+import { PayDepositButton } from "@/components/pay-deposit-button";
 
 interface DetailPageProps {
   params: Promise<{ bookingId: string }>;
@@ -37,8 +38,9 @@ export default async function BookingDetailPage({ params }: DetailPageProps) {
     day: "numeric",
   });
 
-  const canModify =
+  const canCancel =
     booking.status !== "CANCELLED" && booking.status !== "COMPLETED";
+  const canEdit = canCancel && booking.paymentStatus !== "PAID";
 
   return (
     <main>
@@ -107,14 +109,20 @@ export default async function BookingDetailPage({ params }: DetailPageProps) {
             </div>
           </div>
 
-          {canModify && (
+          {booking.paymentStatus !== "PAID" && canEdit && (
+            <PayDepositButton bookingId={booking.id} />
+          )}
+
+          {(canEdit || canCancel) && (
             <div className="flex gap-3">
-              <Link href={`/hair/compte/${booking.id}/modifier`} className="flex-1">
-                <Button variant="outline" className="w-full border-brand-champagne/40 text-brand-black rounded-full py-6">
-                  Modifier
-                </Button>
-              </Link>
-              <CancelBookingButton bookingId={booking.id} />
+              {canEdit && (
+                <Link href={`/hair/compte/${booking.id}/modifier`} className="flex-1">
+                  <Button variant="outline" className="w-full border-brand-champagne/40 text-brand-black rounded-full py-6">
+                    Modifier
+                  </Button>
+                </Link>
+              )}
+              {canCancel && <CancelBookingButton bookingId={booking.id} />}
             </div>
           )}
 
