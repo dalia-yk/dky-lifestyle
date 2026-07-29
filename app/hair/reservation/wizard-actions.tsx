@@ -7,6 +7,7 @@ import { prisma } from "../../../lib/prisma";
 import { BookingCreatedEmail } from "@/emails/booking-created";
 import { BookingWizardData } from "@/types/booking-wizard";
 import { AdminNewBookingEmail } from "@/emails/admin-new-booking";
+import { stripe } from "@/lib/stripe";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -103,11 +104,12 @@ export async function createBookingFromWizard(data: BookingWizardData) {
   });
   const locationLabel = booking.locationType === "HOME" ? "À domicile" : "Studio DKY Hair";
 
+  // On envoie déjà l'email admin (avertir qu'une demande est en cours, avant même le paiement)
   try {
     await resend.emails.send({
       from: "DKY Hair <onboarding@resend.dev>",
       to: "dkylifestyle@gmail.com",
-      subject: `Nouvelle réservation ${bookingNumber} — ${service.name}`,
+      subject: `Nouvelle demande de réservation ${bookingNumber} — ${service.name}`,
       react: AdminNewBookingEmail({
         bookingNumber,
         clientName: data.name,
@@ -121,28 +123,35 @@ export async function createBookingFromWizard(data: BookingWizardData) {
         depositAmount,
       }),
     });
-
-    await resend.emails.send({
-      from: "DKY Hair <onboarding@resend.dev>",
-      to: data.email,
-      subject: `Ta réservation ${bookingNumber} est enregistrée !`,
-      react: BookingCreatedEmail({
-        clientName: data.name,
-        bookingNumber,
-        serviceName: service.name,
-        dateLabel,
-        time: data.time,
-        locationLabel,
-        totalPrice,
-        depositAmount,
-        remainingBalance,
-      }),
-    });
   } catch (error) {
-    console.error("Erreur d'envoi d'email :", error);
+    console.error("Erreur d'envoi d'email admin :", error);
   }
 
-  redirect(`/hair/reservation/confirmation?bookingId=${booking.id}`);
+  // Création de la session de paiement Stripe pour le dépôt
+  const checkoutSession = await stripe.checkout.sessions.create({
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "cad",
+          product_data: {
+            name: `Dépôt — ${service.name} (${bookingNumber})`,
+            description: `Dépôt de 20% pour ta réservation du ${dateLabel} à ${data.time}`,
+          },
+          unit_amount: depositAmount * 100,
+        },
+        quantity: 1,
+      },
+    ],
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/hair/reservation/confirmation?bookingId=${booking.id}`,
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/hair/reservation?serviceId=${service.id}`,
+    metadata: {
+      bookingId: booking.id,
+    },
+  });
+
+  redirect(checkoutSession.url!);
 }
 
 export async function updateBookingFromWizard(

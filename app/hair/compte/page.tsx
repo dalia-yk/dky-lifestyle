@@ -88,16 +88,25 @@ export default async function MonComptePage() {
                       </p>
                     </div>
                     <span
-                      className={`text-xs uppercase tracking-widest px-3 py-1 rounded-full ${
-                        booking.status === "PENDING"
-                          ? "bg-brand-champagne/20 text-brand-champagne"
-                          : booking.status === "CONFIRMED"
-                          ? "bg-green-500/10 text-green-700"
-                          : "bg-brand-mocha/10 text-brand-mocha/50"
-                      }`}
-                    >
-                      {booking.status}
-                    </span>
+                        className={`text-xs uppercase tracking-widest px-3 py-1 rounded-full ${
+                          booking.status === "PENDING"
+                            ? "bg-brand-champagne/20 text-brand-champagne"
+                            : booking.status === "CONFIRMED"
+                            ? "bg-green-500/10 text-green-700"
+                            : "bg-brand-mocha/10 text-brand-mocha/50"
+                        }`}
+                      >
+                        {booking.status}
+                      </span>
+                      <span
+                        className={`text-xs ${
+                          booking.paymentStatus === "PAID"
+                            ? "text-green-600"
+                            : "text-brand-mocha/40"
+                        }`}
+                      >
+                        {booking.paymentStatus === "PAID" ? "✓ Dépôt payé" : "Paiement en attente"}
+                      </span>
                   </Link>
                 ))}
               </div>

@@ -91,6 +91,13 @@ export default async function AdminDashboardPage() {
             <p className="font-sans text-brand-champagne text-sm">
               {booking.depositAmount}$
             </p>
+            <span
+              className={`text-xs ${
+                booking.paymentStatus === "PAID" ? "text-green-500" : "text-brand-ivory/30"
+              }`}
+            >
+              {booking.paymentStatus === "PAID" ? "✓ Payé" : "En attente"}
+            </span>
           </div>
         ))}
         {recentBookings.length === 0 && (

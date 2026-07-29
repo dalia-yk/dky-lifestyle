@@ -57,6 +57,16 @@ export default async function BookingDetailPage({ params }: DetailPageProps) {
               <span className="font-sans text-brand-black text-sm font-medium">{booking.status}</span>
             </div>
             <div className="flex justify-between">
+              <span className="font-sans text-brand-mocha/60 text-sm">Paiement</span>
+              <span
+                className={`font-sans text-sm font-medium ${
+                  booking.paymentStatus === "PAID" ? "text-green-600" : "text-brand-champagne"
+                }`}
+              >
+                {booking.paymentStatus === "PAID" ? "✓ Payé" : "En attente"}
+              </span>
+            </div>
+            <div className="flex justify-between">
               <span className="font-sans text-brand-mocha/60 text-sm">Taille / Longueur</span>
               <span className="font-sans text-brand-black text-sm">{booking.size} / {booking.length}</span>
             </div>

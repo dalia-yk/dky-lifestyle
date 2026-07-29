@@ -35,6 +35,9 @@ export default async function AdminBookingsPage() {
               <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">
                 Actions
               </th>
+              <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">
+                Paiement
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -64,8 +67,7 @@ export default async function AdminBookingsPage() {
                         : booking.status === "CONFIRMED"
                         ? "bg-green-500/20 text-green-400"
                         : "bg-brand-ivory/10 text-brand-ivory/50"
-                    }`}
-                  >
+                    }`}>
                     {booking.status}
                   </span>
                 </td>
@@ -77,6 +79,17 @@ export default async function AdminBookingsPage() {
                 </td>
                 <td className="font-sans text-brand-champagne text-sm p-4">
                   {booking.depositAmount}$
+                </td>
+                <td className="p-4">
+                  <span
+                    className={`text-xs uppercase tracking-widest px-3 py-1 rounded-full ${
+                      booking.paymentStatus === "PAID"
+                        ? "bg-green-500/20 text-green-400"
+                        : "bg-brand-champagne/10 text-brand-ivory/50"
+                    }`}
+                  >
+                    {booking.paymentStatus === "PAID" ? "Payé" : "En attente"}
+                  </span>
                 </td>
               </tr>
             ))}
