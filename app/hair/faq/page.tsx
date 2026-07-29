@@ -22,10 +22,10 @@ const faqs = [
     answer:
       "Ça dépend du style choisi, en général entre 4 et 8 semaines. Chaque fiche de coiffure indique nos recommandations d'entretien pour prolonger la durée de vie de ton style.",
   },
-  {
+ {
     question: "Quelle est la politique d'annulation ?",
     answer:
-      "Toute annulation doit être faite au moins 48 heures avant le rendez-vous pour un remboursement du dépôt. Passé ce délai, le dépôt de 20% n'est malheureusement pas remboursable.",
+      "Une annulation plus de 48h avant le rendez-vous donne droit à un remboursement complet du dépôt. Entre 24h et 48h, 50% du dépôt est remboursé. À moins de 24h ou en cas d'absence, le dépôt n'est pas remboursable. Un retard de plus de 15 minutes peut entraîner l'annulation ou le report du rendez-vous selon les disponibilités ; si le rendez-vous est annulé pour cette raison, le dépôt ne sera pas remboursé.",
   },
   {
     question: "Proposez-vous des services pour enfants ?",

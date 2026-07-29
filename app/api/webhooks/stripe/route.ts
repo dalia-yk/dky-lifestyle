@@ -35,7 +35,10 @@ export async function POST(request: NextRequest) {
     if (bookingId) {
       const booking = await prisma.booking.update({
         where: { id: bookingId },
-        data: { paymentStatus: "PAID" },
+        data: {
+          paymentStatus: "PAID",
+          stripePaymentIntentId: session.payment_intent as string,
+        },
         include: { client: true, service: true },
       });
 

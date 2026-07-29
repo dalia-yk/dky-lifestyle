@@ -32,9 +32,10 @@ export function EmailLayout({
           <Hr style={hr} />
           <Section>
             <Text style={policyText}>
-              Merci d&apos;arriver avec les cheveux démêlés. En cas de retard
-              de plus de 15 minutes, ta réservation pourrait être annulée sans
-              remboursement du dépôt.
+              Merci d&apos;arriver avec les cheveux démêlés. Un retard de plus
+              de 15 minutes peut entraîner l&apos;annulation ou le report du
+              rendez-vous selon les disponibilités ; le dépôt ne serait alors
+              pas remboursable.
             </Text>
             <Text style={footerText}>
               DKY Hair — Crafted by Purpose

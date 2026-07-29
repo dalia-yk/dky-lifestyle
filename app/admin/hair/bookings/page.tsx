@@ -66,8 +66,11 @@ export default async function AdminBookingsPage() {
                         ? "bg-brand-champagne/20 text-brand-champagne"
                         : booking.status === "CONFIRMED"
                         ? "bg-green-500/20 text-green-400"
+                        : booking.status === "CANCELLED"
+                        ? "bg-red-500/20 text-red-400"
                         : "bg-brand-ivory/10 text-brand-ivory/50"
-                    }`}>
+                    }`}
+                  >
                     {booking.status}
                   </span>
                 </td>

@@ -6,6 +6,7 @@ import { prisma } from "../../../../lib/prisma";
 import { BookingConfirmedEmail } from "@/emails/booking-confirmed";
 import { BookingCancelledEmail } from "@/emails/booking-cancelled";
 import { BookingCompletedEmail } from "@/emails/booking-completed";
+import { stripe } from "@/lib/stripe";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -15,11 +16,48 @@ function formatBookingNumber(seq: number, date: Date) {
 
 export async function updateBookingStatus(
   bookingId: string,
-  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED"
+  status: "PENDING" | "CONFIRMED" | "CANCELLED" | "COMPLETED",
+  isNoShowOrLate: boolean = false,
+  cancellationReason: string = ""
 ) {
+  const existingBooking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+  });
+
+  if (!existingBooking) {
+    throw new Error("Réservation introuvable");
+  }
+
+  let refundAmount = 0;
+  let refundReason = "";
+
+  if (
+    status === "CANCELLED" &&
+    existingBooking.paymentStatus === "PAID" &&
+    existingBooking.stripePaymentIntentId
+  ) {
+    const refundPercent = isNoShowOrLate ? 0 : 100;
+    refundAmount = Math.round((existingBooking.depositAmount * refundPercent) / 100);
+    refundReason = isNoShowOrLate
+      ? "Retard ou absence — dépôt non remboursable"
+      : "Annulation par DKY Hair — remboursement complet";
+
+    if (refundAmount > 0) {
+      await stripe.refunds.create({
+        payment_intent: existingBooking.stripePaymentIntentId,
+        amount: refundAmount * 100,
+      });
+    }
+  }
+
   const booking = await prisma.booking.update({
     where: { id: bookingId },
-    data: { status },
+    data: {
+      status,
+      cancellationReason: status === "CANCELLED" ? cancellationReason : null,
+      refundAmount,
+      refundReason: status === "CANCELLED" ? refundReason : null,
+    },
     include: { client: true, service: true },
   });
 
@@ -52,7 +90,12 @@ export async function updateBookingStatus(
         from: "DKY Hair <onboarding@resend.dev>",
         to: booking.client.email,
         subject: `Réservation ${bookingNumber} annulée`,
-        react: BookingCancelledEmail(commonProps),
+        react: BookingCancelledEmail({
+          ...commonProps,
+          refundAmount,
+          refundReason,
+          cancellationReason: booking.cancellationReason ?? undefined,
+        }),
       });
     } else if (status === "COMPLETED") {
       await resend.emails.send({

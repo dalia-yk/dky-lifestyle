@@ -93,6 +93,8 @@ export default async function MonComptePage() {
                             ? "bg-brand-champagne/20 text-brand-champagne"
                             : booking.status === "CONFIRMED"
                             ? "bg-green-500/10 text-green-700"
+                            : booking.status === "CANCELLED"
+                            ? "bg-red-500/10 text-red-600"
                             : "bg-brand-mocha/10 text-brand-mocha/50"
                         }`}
                       >
