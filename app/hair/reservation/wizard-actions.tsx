@@ -92,6 +92,7 @@ export async function createBookingFromWizard(data: BookingWizardData) {
       depositAmount,
       remainingBalance,
       paymentStatus: "DEPOSIT_REQUESTED",
+      policyAcceptedAt: data.policyAccepted ? new Date() : null,
     },
   });
 

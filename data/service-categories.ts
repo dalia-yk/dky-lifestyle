@@ -16,17 +16,10 @@ export const serviceCategories: ServiceCategory[] = [
   },
   {
     slug: "hair-care",
-    title: "Soins Capillaires",
-    tagline: "Lavage, hydratation, traitement, massage",
+    title: "Soins & Préparation",
+    tagline: "Lavage, hydratation, traitement, dépose, démêlage",
     href: "/hair/services/hair-care",
     tone: "from-brand-champagne/40 to-brand-black",
-  },
-  {
-    slug: "preparation",
-    title: "Préparation",
-    tagline: "Dépose, démêlage, préparation avant coiffure",
-    href: "/hair/services/preparation",
-    tone: "from-brand-black to-brand-mocha",
   },
   {
     slug: "packages",

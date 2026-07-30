@@ -30,7 +30,7 @@ export function LifestyleHero() {
         <div className="flex flex-col sm:flex-row gap-4">
           <Link href="#divisions">
             <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-8 py-6 text-base">
-              Discover our divisions
+              Découvrir nos Divisions
             </Button>
           </Link>
           <Link href="/a-propos">

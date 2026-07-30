@@ -1,10 +1,26 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { prisma } from "../../../../lib/prisma";
 import { DeleteAddOnButton } from "@/components/admin/delete-addon-button";
 
-export default async function AdminAddOnsPage() {
-  const addOns = await prisma.addOn.findMany({ orderBy: { name: "asc" } });
+const PAGE_SIZE = 10;
+
+interface Props {
+  searchParams: Promise<{ page?: string }>;
+}
+
+export default async function AdminAddOnsPage({ searchParams }: Props) {
+  const { page } = await searchParams;
+  const currentPage = Math.max(1, Number(page) || 1);
+
+  const totalCount = await prisma.addOn.count();
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+
+  const addOns = await prisma.addOn.findMany({
+    orderBy: { name: "asc" },
+    skip: (currentPage - 1) * PAGE_SIZE,
+    take: PAGE_SIZE,
+  });
 
   return (
     <div>
@@ -24,6 +40,7 @@ export default async function AdminAddOnsPage() {
             <tr className="border-b border-brand-champagne/20">
               <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">Nom</th>
               <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">Prix</th>
+              <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">Durée</th>
               <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">Actions</th>
             </tr>
           </thead>
@@ -32,6 +49,7 @@ export default async function AdminAddOnsPage() {
               <tr key={addOn.id} className="border-b border-brand-champagne/10 last:border-0">
                 <td className="font-sans text-brand-ivory text-sm p-4">{addOn.name}</td>
                 <td className="font-sans text-brand-champagne text-sm p-4">{addOn.price}$</td>
+                <td className="font-sans text-brand-ivory/70 text-sm p-4">{addOn.durationMinutes} min</td>
                 <td className="p-4">
                   <div className="flex gap-3">
                     <Link
@@ -53,6 +71,32 @@ export default async function AdminAddOnsPage() {
           </p>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between mt-6">
+          <p className="font-sans text-brand-ivory/40 text-xs">
+            Page {currentPage} / {totalPages} — {totalCount} add-ons
+          </p>
+          <div className="flex gap-2">
+            <Link
+              href={`/admin/hair/addons?page=${Math.max(1, currentPage - 1)}`}
+              className={`flex items-center gap-1 text-xs font-sans px-3 py-1.5 rounded-lg border border-brand-champagne/20 ${
+                currentPage === 1 ? "text-brand-ivory/20 pointer-events-none" : "text-brand-ivory/70 hover:border-brand-champagne/50"
+              }`}
+            >
+              <ChevronLeft size={14} /> Précédent
+            </Link>
+            <Link
+              href={`/admin/hair/addons?page=${Math.min(totalPages, currentPage + 1)}`}
+              className={`flex items-center gap-1 text-xs font-sans px-3 py-1.5 rounded-lg border border-brand-champagne/20 ${
+                currentPage === totalPages ? "text-brand-ivory/20 pointer-events-none" : "text-brand-ivory/70 hover:border-brand-champagne/50"
+              }`}
+            >
+              Suivant <ChevronRight size={14} />
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

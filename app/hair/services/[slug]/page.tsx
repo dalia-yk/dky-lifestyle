@@ -24,8 +24,18 @@ export default async function ServiceDetailPage({ params }: ServiceDetailProps) 
     <main>
       <Navbar />
 
-      <section className="bg-gradient-to-br from-brand-mocha to-brand-black pt-40 pb-20 px-6">
-        <div className="max-w-3xl mx-auto text-center">
+      <section
+        style={
+          service.imageUrl
+            ? { backgroundImage: `url(${service.imageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+            : undefined
+        }
+        className={`relative pt-40 pb-20 px-6 ${!service.imageUrl ? "bg-gradient-to-br from-brand-mocha to-brand-black" : ""}`}
+      >
+        {service.imageUrl && (
+          <div className="absolute inset-0 bg-black/50" />
+        )}
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
           <span className="font-sans uppercase tracking-[0.3em] text-brand-champagne text-sm mb-4 block">
             Collections
           </span>

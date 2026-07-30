@@ -81,6 +81,7 @@ export default async function ModifyBookingPage({ params }: EditPageProps) {
     name: booking.client.name,
     email: booking.client.email,
     phone: booking.client.phone ?? "",
+    policyAccepted: booking.policyAcceptedAt !== null,
   };
 
   return (

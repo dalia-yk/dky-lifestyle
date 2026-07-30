@@ -15,7 +15,7 @@ export default async function HairCareDetailPage({
 }: HairCareDetailProps) {
   const { slug } = await params;
   const item = await prisma.service.findFirst({
-    where: { slug, category: "HAIR_CARE" },
+    where: { slug, category: { in: ["HAIR_CARE", "PREPARATION"] } },
   });
 
   if (!item) {
@@ -26,8 +26,18 @@ export default async function HairCareDetailPage({
     <main>
       <Navbar />
 
-      <section className="bg-gradient-to-br from-brand-mocha to-brand-black pt-40 pb-20 px-6">
-        <div className="max-w-3xl mx-auto text-center">
+      <section
+        style={
+          item.imageUrl
+            ? { backgroundImage: `url(${item.imageUrl})`, backgroundSize: "cover", backgroundPosition: "center" }
+            : undefined
+        }
+        className={`relative pt-40 pb-20 px-6 ${!item.imageUrl ? "bg-gradient-to-br from-brand-mocha to-brand-black" : ""}`}
+      >
+        {item.imageUrl && (
+          <div className="absolute inset-0 bg-black/50" />
+        )}
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
           <span className="font-sans uppercase tracking-[0.3em] text-brand-champagne text-sm mb-4 block">
             Soins Capillaires
           </span>
@@ -82,7 +92,7 @@ export default async function HairCareDetailPage({
 
 export async function generateStaticParams() {
   const items = await prisma.service.findMany({
-    where: { category: "HAIR_CARE" },
+    where: { category: { in: ["HAIR_CARE", "PREPARATION"] } },
     select: { slug: true },
   });
   return items.map((item) => ({ slug: item.slug }));

@@ -14,6 +14,7 @@ export interface BookingWizardData {
   name: string;
   email: string;
   phone: string;
+  policyAccepted: boolean;
 }
 
 export const initialWizardData: BookingWizardData = {
@@ -32,4 +33,5 @@ export const initialWizardData: BookingWizardData = {
   name: "",
   email: "",
   phone: "",
+  policyAccepted: false,
 };

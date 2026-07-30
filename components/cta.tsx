@@ -21,10 +21,10 @@ export function Cta() {
           Découvre nos divisions et réserve ton moment Crafted by Purpose.
         </p>
         <Link href="#divisions">
-            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-10 py-6 text-base">
-               Découvrir nos divisions
+            <Button className="bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full px-8 py-6 text-base">
+              Découvrir nos Divisions
             </Button>
-        </Link>
+          </Link>
       </motion.div>
     </section>
   );

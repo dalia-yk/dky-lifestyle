@@ -4,6 +4,7 @@ import { useState } from "react";
 import { BookingWizardData } from "@/types/booking-wizard";
 import { Button } from "@/components/ui/button";
 import { createBookingFromWizard, updateBookingFromWizard } from "@/app/hair/reservation/wizard-actions";
+import Link from "next/link";
 
 interface ServiceOption {
   id: string;
@@ -39,6 +40,7 @@ interface StepProps {
 
 export function StepSummary({ data, services, addOns, packages, onBack, mode, bookingId }: StepProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [policyAccepted, setPolicyAccepted] = useState(false);
   const service = services.find((s) => s.id === data.serviceId);
   const selectedPackage = packages.find((p) => p.id === data.packageId);
 
@@ -63,12 +65,13 @@ export function StepSummary({ data, services, addOns, packages, onBack, mode, bo
   const totalPrice = basePrice + extensionFee + packagePrice + extraAddOnsTotal;
   const depositAmount = Math.round(totalPrice * 0.2);
 
-  async function handleSubmit() {
+async function handleSubmit() {
+    if (!policyAccepted) return;
     setIsSubmitting(true);
     if (mode === "edit" && bookingId) {
       await updateBookingFromWizard(bookingId, data);
     } else {
-      await createBookingFromWizard(data);
+      await createBookingFromWizard({ ...data, policyAccepted: true });
     }
   }
 
@@ -141,12 +144,30 @@ export function StepSummary({ data, services, addOns, packages, onBack, mode, bo
         </div>
       </div>
 
+      <label className="flex items-start gap-3 mb-6 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={policyAccepted}
+          onChange={(e) => setPolicyAccepted(e.target.checked)}
+          className="mt-1"
+        />
+        <span className="font-sans text-brand-ivory/70 text-sm">
+          J&apos;ai lu et j&apos;accepte la{" "}
+          <Link href="/hair/politique-reservation" target="_blank" className="text-brand-champagne hover:underline">
+            politique de réservation de DKY Hair
+          </Link>
+          .
+        </span>
+      </label>
+
       <div className="flex gap-3">
         <Button onClick={onBack} disabled={isSubmitting} variant="outline" className="flex-1 border-brand-ivory/30 text-brand-ivory rounded-full py-6">
           Retour
         </Button>
         <Button onClick={handleSubmit} disabled={isSubmitting} className="flex-1 bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full py-6 disabled:opacity-60">
           {isSubmitting ? "Envoi en cours..." : mode === "edit" ? "Enregistrer les modifications" : "Confirmer la réservation"}
+        </Button>
+        <Button onClick={handleSubmit} disabled={isSubmitting || !policyAccepted} className="flex-1 bg-brand-champagne text-brand-black hover:bg-brand-champagne/90 rounded-full py-6 disabled:opacity-60">
         </Button>
       </div>
     </div>

@@ -61,6 +61,14 @@ export function Navbar() {
             </Link>
           )}
           {isHairSection && (
+            <Link
+              href="/"
+              className="font-sans text-brand-ivory/50 hover:text-brand-champagne text-xs uppercase tracking-wide transition-colors"
+            >
+              ← DKY Lifestyle
+            </Link>
+          )}
+          {isHairSection && (
             <Show when="signed-in">
               <Link
                 href="/hair/compte"

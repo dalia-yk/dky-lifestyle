@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createService, updateService } from "@/app/admin/hair/services/actions";
+import { ImageUploader } from "./image-uploader";
 
 interface ServiceFormValues {
   slug: string;
@@ -19,6 +20,7 @@ interface ServiceFormValues {
   requiresSize: boolean;
   category: "COLLECTION" | "HAIR_CARE" | "PREPARATION";
   collection: string;
+  imageUrl: string | null;
 }
 
 const defaultValues: ServiceFormValues = {
@@ -35,6 +37,7 @@ const defaultValues: ServiceFormValues = {
   requiresSize: true,
   category: "COLLECTION",
   collection: "",
+  imageUrl: null,
 };
 
 export function ServiceForm({
@@ -69,6 +72,15 @@ export function ServiceForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5 max-w-2xl">
       <div>
+        <label className={labelClass}>Photo</label>
+        <ImageUploader
+          value={values.imageUrl}
+          onChange={(url) => update({ imageUrl: url || null })}
+          folder="dky-lifestyle/services"
+        />
+      </div>
+
+      <div>
         <label className={labelClass}>Nom</label>
         <input
           type="text"
@@ -78,6 +90,7 @@ export function ServiceForm({
           className={inputClass}
         />
       </div>
+      
 
       <div>
         <label className={labelClass}>Slug (URL)</label>

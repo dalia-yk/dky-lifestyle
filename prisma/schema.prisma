@@ -43,6 +43,7 @@ model Service {
   requiresSize            Boolean         @default(true)
   category                ServiceCategory @default(COLLECTION)
   collection              String
+  imageUrl                String?
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @updatedAt
   bookings                Booking[]
@@ -102,6 +103,7 @@ model Booking {
   refundReason       String?
   stripePaymentIntentId String?
   notes             String?
+  policyAcceptedAt DateTime?
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt
 }

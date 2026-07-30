@@ -18,6 +18,7 @@ interface ServiceFormData {
   requiresSize: boolean;
   category: "COLLECTION" | "HAIR_CARE" | "PREPARATION";
   collection: string;
+  imageUrl: string | null;
 }
 
 export async function createService(data: ServiceFormData) {
