@@ -1,37 +1,73 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { prisma } from "../../../lib/prisma";
+import { SearchBar } from "@/components/admin/search-bar";
+import { SortableHeader } from "@/components/admin/sortable-header";
+import type { Prisma } from "../../../lib/generated/prisma/client";
 
 const PAGE_SIZE = 10;
 
 interface Props {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; q?: string; sort?: string; order?: string }>;
 }
 
 export default async function AdminClientsPage({ searchParams }: Props) {
-  const { page } = await searchParams;
+  const { page, q, sort, order } = await searchParams;
   const currentPage = Math.max(1, Number(page) || 1);
+  const sortField = sort || "createdAt";
+  const sortOrder = order === "asc" ? "asc" : "desc";
 
-  const totalCount = await prisma.client.count();
+  const where: Prisma.ClientWhereInput = q
+    ? {
+        OR: [
+          { name: { contains: q, mode: "insensitive" } },
+          { email: { contains: q, mode: "insensitive" } },
+        ],
+      }
+    : {};
+
+  const totalCount = await prisma.client.count({ where });
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const clients = await prisma.client.findMany({
+    where,
     include: { bookings: true },
-    orderBy: { createdAt: "desc" },
+    orderBy: { [sortField]: sortOrder },
     skip: (currentPage - 1) * PAGE_SIZE,
     take: PAGE_SIZE,
   });
 
   return (
     <div>
-      <h1 className="font-heading text-brand-ivory text-3xl mb-8">Clients</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="font-heading text-brand-ivory text-3xl">Clients</h1>
+        <SearchBar placeholder="Rechercher un nom ou email..." />
+      </div>
 
       <div className="bg-white/5 border border-brand-champagne/20 rounded-2xl overflow-hidden">
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-brand-champagne/20">
-              <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">Nom</th>
-              <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">Contact</th>
+              <th className="p-4">
+                <SortableHeader
+                  label="Nom"
+                  field="name"
+                  currentSort={sortField}
+                  currentOrder={sortOrder}
+                  basePath="/admin/clients"
+                  searchParams={{ q, page }}
+                />
+              </th>
+              <th className="p-4">
+                <SortableHeader
+                  label="Contact"
+                  field="email"
+                  currentSort={sortField}
+                  currentOrder={sortOrder}
+                  basePath="/admin/clients"
+                  searchParams={{ q, page }}
+                />
+              </th>
               <th className="font-sans text-brand-ivory/50 text-xs uppercase tracking-widest p-4">Réservations</th>
             </tr>
           </thead>
@@ -51,7 +87,7 @@ export default async function AdminClientsPage({ searchParams }: Props) {
         </table>
         {clients.length === 0 && (
           <p className="text-center font-sans text-brand-ivory/50 text-sm py-12">
-            Aucun client pour le moment.
+            {q ? `Aucun client trouvé pour "${q}".` : "Aucun client pour le moment."}
           </p>
         )}
       </div>
@@ -63,7 +99,7 @@ export default async function AdminClientsPage({ searchParams }: Props) {
           </p>
           <div className="flex gap-2">
             <Link
-              href={`/admin/clients?page=${Math.max(1, currentPage - 1)}`}
+              href={`/admin/clients?page=${Math.max(1, currentPage - 1)}&q=${q ?? ""}&sort=${sortField}&order=${sortOrder}`}
               className={`flex items-center gap-1 text-xs font-sans px-3 py-1.5 rounded-lg border border-brand-champagne/20 ${
                 currentPage === 1 ? "text-brand-ivory/20 pointer-events-none" : "text-brand-ivory/70 hover:border-brand-champagne/50"
               }`}
@@ -71,7 +107,7 @@ export default async function AdminClientsPage({ searchParams }: Props) {
               <ChevronLeft size={14} /> Précédent
             </Link>
             <Link
-              href={`/admin/clients?page=${Math.min(totalPages, currentPage + 1)}`}
+              href={`/admin/clients?page=${Math.min(totalPages, currentPage + 1)}&q=${q ?? ""}&sort=${sortField}&order=${sortOrder}`}
               className={`flex items-center gap-1 text-xs font-sans px-3 py-1.5 rounded-lg border border-brand-champagne/20 ${
                 currentPage === totalPages ? "text-brand-ivory/20 pointer-events-none" : "text-brand-ivory/70 hover:border-brand-champagne/50"
               }`}
