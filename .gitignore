@@ -41,3 +41,12 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+
+# AI assistant configuration
+.claude/
+.agents/
+.windsurf/
+
+CLAUDE.md
+AGENTS.md
