@@ -1,4 +1,4 @@
-# 🌟 DKY Lifestyle
+# DKY Lifestyle
 
 > **Crafted by Purpose.**
 
@@ -8,7 +8,7 @@ La première division disponible est **DKY Hair**, une plateforme complète de r
 
 ---
 
-# 📖 Description
+# Description
 
 DKY Hair permet aux clientes de :
 
@@ -23,7 +23,7 @@ L'application comprend également un espace administrateur permettant de gérer 
 
 ---
 
-# 🚀 Technologies
+# Technologies
 
 ## Frontend
 
@@ -63,9 +63,9 @@ L'application comprend également un espace administrateur permettant de gérer 
 
 ---
 
-# ✨ Fonctionnalités
+#  Fonctionnalités
 
-## 🌐 Site public
+## Site public
 
 - Landing page premium
 - Présentation de DKY Lifestyle
@@ -77,7 +77,7 @@ L'application comprend également un espace administrateur permettant de gérer 
 
 ---
 
-## 💇 DKY Hair
+## DKY Hair
 
 ### Collections
 
@@ -112,7 +112,7 @@ L'application comprend également un espace administrateur permettant de gérer 
 
 ---
 
-## 📅 Réservation
+## Réservation
 
 - Wizard intelligent
 - Réservation adaptative selon le service choisi
@@ -125,7 +125,7 @@ L'application comprend également un espace administrateur permettant de gérer 
 
 ---
 
-## 👤 Espace client
+## Espace client
 
 - Authentification sécurisée
 - Tableau de bord
@@ -157,7 +157,7 @@ Gestion complète de :
 
 ---
 
-# 📂 Structure du projet
+# Structure du projet
 
 ```
 app/
@@ -172,7 +172,7 @@ types/
 
 ---
 
-# ⚙️ Installation
+# Installation
 
 ## 1. Cloner le projet
 
@@ -242,7 +242,7 @@ http://localhost:3000
 
 ---
 
-# 🛣️ Feuille de route
+# Feuille de route
 
 - [x] Authentification Clerk
 - [x] Dashboard administrateur
@@ -257,7 +257,7 @@ http://localhost:3000
 
 ---
 
-# 👩🏽‍💻 Développé par
+# Développé par
 
 **Dalia Ketchemen Yimga**
 
@@ -265,6 +265,6 @@ Baccalauréat en informatique – Université du Québec en Outaouais (UQO)
 
 ---
 
-# 📜 Licence
+# Licence
 
 Projet privé — Tous droits réservés © DKY Lifestyle.
