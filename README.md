@@ -1,36 +1,270 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌟 DKY Lifestyle
 
-## Getting Started
+> **Crafted by Purpose.**
 
-First, run the development server:
+DKY Lifestyle est une plateforme web moderne développée avec **Next.js** qui regroupe plusieurs divisions sous une seule marque. Chaque division offre une expérience unique tout en partageant les mêmes valeurs : excellence, créativité et professionnalisme.
+
+La première division disponible est **DKY Hair**, une plateforme complète de réservation et de gestion pour un salon de coiffure. À terme, DKY Lifestyle accueillera également **DKY Pastry**, **DKY Events**, **DKY Tech** et d'autres projets.
+
+---
+
+# 📖 Description
+
+DKY Hair permet aux clientes de :
+
+- Découvrir les différentes coiffures et services proposés
+- Réserver un rendez-vous via un assistant de réservation intelligent
+- Choisir des forfaits et services complémentaires
+- Effectuer un dépôt sécurisé en ligne
+- Suivre leurs réservations depuis leur espace client
+- Acheter des produits capillaires dans la boutique
+
+L'application comprend également un espace administrateur permettant de gérer entièrement l'entreprise sans modifier le code.
+
+---
+
+# 🚀 Technologies
+
+## Frontend
+
+- Next.js 15
+- React
+- TypeScript
+- Tailwind CSS
+- Framer Motion
+- shadcn/ui
+
+## Backend
+
+- Next.js Server Actions
+- Prisma ORM
+- PostgreSQL (Neon)
+
+## Authentification
+
+- Clerk Authentication
+
+## Paiement
+
+- Stripe Checkout
+- Stripe Webhooks
+
+## Emails
+
+- Resend
+
+## Images
+
+- Cloudinary
+
+## Déploiement
+
+- Vercel
+
+---
+
+# ✨ Fonctionnalités
+
+## 🌐 Site public
+
+- Landing page premium
+- Présentation de DKY Lifestyle
+- Galerie
+- Catalogue des services
+- Boutique
+- FAQ
+- Contact
+
+---
+
+## 💇 DKY Hair
+
+### Collections
+
+- Femmes
+- Hommes
+- Enfants
+
+### Soins capillaires & Préparation
+
+- Lavage
+- Traitement hydratant
+- Traitement protéiné
+- Massage du cuir chevelu
+- Dépose
+- Démêlage
+- Préparation avant coiffure
+
+### Forfaits
+
+- Essential
+- Care
+- Signature
+- Prestige
+
+### Boutique
+
+- Mèches premium
+- Bonnets satin
+- Huiles
+- Mousses
+- Accessoires
+
+---
+
+## 📅 Réservation
+
+- Wizard intelligent
+- Réservation adaptative selon le service choisi
+- Calcul automatique du prix
+- Calcul automatique du dépôt (20%)
+- Gestion des disponibilités
+- Vérification des conflits de réservation
+- Paiement Stripe
+- Confirmation par email
+
+---
+
+## 👤 Espace client
+
+- Authentification sécurisée
+- Tableau de bord
+- Historique des réservations
+- Historique des commandes
+- Recherche
+- Filtres
+- Modification du profil
+- Réserver à nouveau
+- Suivi des paiements
+
+---
+
+## ⚙️ Dashboard Administrateur
+
+Gestion complète de :
+
+- Services
+- Forfaits
+- Add-ons
+- Produits
+- Clients
+- Réservations
+- Commandes
+- Disponibilités
+- Images (Cloudinary)
+- Utilisateurs
+- Statistiques
+
+---
+
+# 📂 Structure du projet
+
+```
+app/
+components/
+lib/
+prisma/
+public/
+actions/
+hooks/
+types/
+```
+
+---
+
+# ⚙️ Installation
+
+## 1. Cloner le projet
+
+```bash
+git clone https://github.com/USERNAME/dky-lifestyle.git
+
+cd dky-lifestyle
+```
+
+---
+
+## 2. Installer les dépendances
+
+```bash
+npm install
+```
+
+---
+
+## 3. Configurer les variables d'environnement
+
+Créer un fichier :
+
+```
+.env
+```
+
+Puis ajouter :
+
+```env
+DATABASE_URL=
+
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+
+RESEND_API_KEY=
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
+
+---
+
+## 4. Générer Prisma
+
+```bash
+npx prisma generate
+```
+
+---
+
+## 5. Lancer le projet
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Le site sera disponible sur :
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+# 🛣️ Feuille de route
 
-To learn more about Next.js, take a look at the following resources:
+- [x] Authentification Clerk
+- [x] Dashboard administrateur
+- [x] Réservation intelligente
+- [x] Gestion des disponibilités
+- [x] Paiement Stripe
+- [x] Emails automatiques
+- [x] Gestion des images avec Cloudinary
+- [ ] DKY Pastry
+- [ ] DKY Events
+- [ ] DKY Tech
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 👩🏽‍💻 Développé par
 
-## Deploy on Vercel
+**Dalia Ketchemen Yimga**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Baccalauréat en informatique – Université du Québec en Outaouais (UQO)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+# 📜 Licence
+
+Projet privé — Tous droits réservés © DKY Lifestyle.
